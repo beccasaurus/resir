@@ -1,0 +1,46 @@
+<% begin
+
+require 'cgi'; @cgi = CGI.new
+
+@path          = ENV['REQUEST_URI'].sub(/^\//,'')  # eg. /about-us
+@domain        = ENV['HTTP_HOST']                  # eg. site.com
+@directory     = ENV['DOCUMENT_ROOT']              # full path to site directory
+@template_dir  = File.join @directory, '_templates'
+@filters       = {
+  :erb => lambda { |text| require 'erb';    ERB.new(text).result(binding) },
+  :mkd => lambda { |text| require 'maruku'; Maruku.new(text).to_html      }
+}
+
+def find_template_for_path path, dir = @template_dir
+  Dir["#{dir}/#{path}.*"].select{ |match| File.file?match }.first		 
+end
+def render template
+  template = find_template_for_path(template) if not File.file?template
+  return '' if not File.file?template
+  filename   = File.basename template
+  extensions = ( filename.split('.') - [ filename[/(\w+)/] ] ).reverse
+  result     = File.read template
+  extensions.each do |ext|
+    result = @filters[ext.to_sym].call(result) if @filters.has_key?ext.to_sym
+  end
+  result
+end
+def output content, options = { 'type' => 'text/html' }
+  puts @cgi.header options['type']
+  puts content
+end
+
+if @template = find_template_for_path(@path)
+  @layout   = 'layout'
+  @content  = render @template
+  @layout   = find_template_for_path @layout
+  @content  = render @layout if @layout
+  output @content
+else
+  output "404 File Not Found", { 'type' => 'text/plain' }
+end
+
+# ---------------------------------[ ruler ]---------------------------------- #
+rescue Exception => ex
+	puts "<h1>#{ex.class}</h1><p>#{ex}</p>"
+end %>
