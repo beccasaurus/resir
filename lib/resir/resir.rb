@@ -11,7 +11,7 @@ class Resir
   initialize
 
   def self.sites *dirs
-    dirs.inject([]){ |all,dir| all + find_site_dirs(dir) }.collect{ |dir| Resir::Site.new(dir) }
+    dirs.inject([]){ |all,dir| all + find_site_dirs(dir) }.uniq.collect{ |dir| Resir::Site.new(dir) }
   end
 
   def self.find_site_dirs in_this_directory
