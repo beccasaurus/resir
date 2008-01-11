@@ -10,12 +10,17 @@ class Resir
   end
   initialize
 
-  def self.sites *dirs
+  def self.get_sites *dirs
     dirs.inject([]){ |all,dir| all + find_site_dirs(dir) }.uniq.collect{ |dir| Resir::Site.new(dir) }
   end
+  def self.sites *dirs; get_sites *dirs; end
 
   def self.find_site_dirs in_this_directory
     Dir[ File.join( in_this_directory, '**', Resir.site_rc_file ) ].collect{|rc| File.dirname rc }  
+  end
+
+  def self.get_extensions filename
+    ( filename.split('.') - [ filename[/(\w+)/] ] ).reverse
   end
 
 end

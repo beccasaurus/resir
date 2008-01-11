@@ -12,4 +12,13 @@ describe Resir::Site do
     site.testing.should == 123
   end
 
+  it "should find template files" do
+    site = Resir::Site.new 'examples/ambrose/starmonkey'
+    site.get_template('home').should == 'home.erb'
+    site.get_template('home.mkd').should == 'home.mkd.erb'
+    site.get_template('star').should == 'star.html'
+    site.get_template('monkey').should == 'monkey.tidy.mkd.erb'
+    site.get_template('elf').should == 'elf'
+  end
+
 end
