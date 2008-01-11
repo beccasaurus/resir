@@ -37,20 +37,26 @@ describe Resir do
     sites = Resir::sites(ambrose)
     dirs = sites.collect{|s| s.root_directory}
     #     examples/ambrose/
-    #       |-- pet_ham
-    #     |   `-- public
-    #     |-- starmonkey
+    #       |-- starmonkey
     #     |   |-- .siterc
     #     |   `-- public
     #     |-- the_elf
+    #     |   `-- pet_ham
+    #     |       |-- .siterc
+    #     |       `-- public
     #     `-- trady_blix
-    #         `-- pardon_our_mess_folks
-    #                 |-- .siterc
-    #                         `-- shuffle_right_past_the_little_fellow
+    #         |-- .siterc
+    #             `-- pardon_our_mess_folks
+    #                     `-- shuffle_right_past_the_little_fellow
     sites.should be_a_kind_of(Array)
-    sites.length.should == 2
+    sites.length.should == 3
     dirs.should include("#{ambrose}/starmonkey")
-    dirs.should include("#{ambrose}/trady_blix/pardon_our_mess_folks")
+    dirs.should include("#{ambrose}/the_elf/pet_ham")
+    dirs.should include("#{ambrose}/trady_blix")
+
+    sites.select {|s| s.root_directory == "#{ambrose}/starmonkey" }.site_public_directory.should == 'public'
+    sites.select {|s| s.root_directory == "#{ambrose}/the_elf/pet_ham" }.site_public_directory.should == 'public'
+    sites.select {|s| s.root_directory == "#{ambrose}/trady_blix" }.site_public_directory.should == 'pardon_our_mess_folks/shuffle_right_past_the_little_fellow'
   end
 
   it "should resirize an Array of Resir::Sites"
@@ -59,6 +65,14 @@ end
 
 describe Resir::Site do
 
-  it "should act like an indifferent Hash"
+  it "should act like an indifferent Hash" do
+    site = Resir::Site.new 'examples/ambrose/starmonkey'
+    site.testing = 123
+    site.variables['testing'].should == 123
+    site.variables.testing.should == 123
+    site.vars.testing.should == 123
+    site['testing'].should == 123
+    site.testing.should == 123
+  end
 
 end

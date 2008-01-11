@@ -1,17 +1,5 @@
 class Resir
-  
-  # setup Resir variable Hash
-  class << self
-    attr_accessor :variables
-    alias vars variables ; alias :vars= :variables=
-  end
-  def self.method_missing name, *a
-    begin
-      self.variables.send name, *a
-    rescue
-      super name, *a
-    end
-  end 
+  meta_include IndifferentVariableHash
 
   # load ~/.resirrc if it exists ( path is not customizable )
   def self.initialize
@@ -27,7 +15,7 @@ class Resir
   end
 
   def self.find_site_dirs in_this_directory
-    Dir[ File.join in_this_directory, '**', Resir.site_rc_file ].collect{|rc| File.dirname rc }  
+    Dir[ File.join( in_this_directory, '**', Resir.site_rc_file ) ].collect{|rc| File.dirname rc }  
   end
 
 end
