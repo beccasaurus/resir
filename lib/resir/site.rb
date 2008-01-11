@@ -37,7 +37,11 @@ class Resir::Site
   end
 
   def render_template name
-    File.read template_realpath(name)
+    rendered = File.read template_realpath(name)
+    Resir::get_extensions(name).each do |ext|
+      rendered = Resir.extensions[ext].call(rendered) if Resir.extensions.include?ext and Resir.extensions[ext].respond_to?:call
+    end
+    rendered
   end
 
   def get_template name

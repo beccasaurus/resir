@@ -33,6 +33,27 @@ describe Resir::Site, 'Rack Adapter' do
     response.body.should include('hello from the elf')
   end
 
+  # move to filters and extensions spec ?
+  it 'should render ERB if filter and extension defined' do
+    Resir.filters.delete('erb')
+    Resir.extensions.delete('erb')
+    response = @request.get 'home'
+    response.status.should == 200
+    response.body.should == %{<%= "hello there!" %>\n}
+
+    require 'erb'
+    Resir.filters.erb = lambda { |text| ERB.new(text).result(binding) }
+    Resir.extensions.erb = nil
+    response = @request.get 'home'
+    response.status.should == 200
+    response.body.should == %{<%= "hello there!" %>\n}
+
+    Resir.extensions.erb = lambda { |text| Resir.filters.erb.call text }
+    response = @request.get 'home'
+    response.status.should == 200
+    response.body.should == %{hello there!\n}
+  end
+
   it 'should 404 if file not found' do
     response = @request.get 'bacon'
     response.status.should == 404
