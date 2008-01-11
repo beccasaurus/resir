@@ -29,6 +29,7 @@ describe Resir do
     Resir.site_public_directory.should == 'public'
   end
 
+  # make a few more example dirs and confirm sites all load (use 1 top lvl and 2/3 subdirs)
   it "should return an Array of Resir::Site's from *directories"
 
   it "should return an Array of Resir::Site's from a directory" do
@@ -60,19 +61,5 @@ describe Resir do
   end
 
   it "should resirize an Array of Resir::Sites"
-
-end
-
-describe Resir::Site do
-
-  it "should act like an indifferent Hash" do
-    site = Resir::Site.new 'examples/ambrose/starmonkey'
-    site.testing = 123
-    site.variables['testing'].should == 123
-    site.variables.testing.should == 123
-    site.vars.testing.should == 123
-    site['testing'].should == 123
-    site.testing.should == 123
-  end
 
 end

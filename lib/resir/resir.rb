@@ -4,9 +4,9 @@ class Resir
   # load ~/.resirrc if it exists ( path is not customizable )
   def self.initialize
     @variables ||= {}
+    load 'resir/config.rb'
     resirrc = File.expand_path '~/.resirrc'
     load resirrc if File.file?resirrc
-    load 'resir/config.rb'
   end
   initialize
 
