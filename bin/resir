@@ -1,4 +1,15 @@
 #! /usr/bin/env ruby
 require File.dirname(__FILE__) + '/../lib/resir'
+require 'rubygems'
+require 'thin'
 
-puts "resir: " + ARGV.inspect
+puts "resir: " + ARGV.inspect + "\n\n"
+puts "right now, this will simply take the first site it "
+puts "finds in the directory you pass (or working directory)"
+puts "and run it\n\n"
+
+dir = Dir.pwd
+dir = ARGV.shift if ARGV.length > 0
+
+site = Resir::get_sites( dir ).first
+Rack::Handler::Thin.run site

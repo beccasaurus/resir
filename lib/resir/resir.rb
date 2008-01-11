@@ -20,6 +20,9 @@ class Resir
   end
 
   def self.get_extensions filename
+    # trick to make sure we get some extensions, if missing them ... try to move this latter ...
+    self.initialize if Resir.extensions.length == 0
+    filename = File.basename filename
     ( filename.split('.') - [ filename[/(\w+)/] ] ).reverse
   end
 

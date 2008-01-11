@@ -11,7 +11,7 @@ describe Resir::Site, 'Rack Adapter' do
   end
 
   it 'should respond to #call' do
-    response = @site.call Rack::MockRequest::env_for '/some/path'
+    response = @site.call Rack::MockRequest::env_for('/some/path')
     response.should be_a_kind_of(Array)
     response.length.should == 3
     response.first.should be_a_kind_of(Fixnum)
@@ -33,6 +33,27 @@ describe Resir::Site, 'Rack Adapter' do
     response.body.should include('hello from the elf')
   end
 
+  it 'should 200 if file found (with leading slash)' do
+    response = @request.get '/elf'
+    response.status.should == 200
+    response.body.should include('hello from the elf')
+  end
+
+  it 'should 200 if file found (with trailing slash)' do
+    response = @request.get 'elf/'
+    response.status.should == 200
+    response.body.should include('hello from the elf')
+  end
+
+  it 'should support directory_index' do
+    require 'erb'
+    Resir.filters.erb = lambda { |text| ERB.new(text).result(binding) }
+    Resir.extensions.erb = lambda { |text| Resir.filters.erb.call text }
+    response = @request.get '/'
+    response.status.should == 200
+    response.body.should == %{Hello From Index\n}
+  end
+
   # move to filters and extensions spec ?
   it 'should render ERB if filter and extension defined' do
     Resir.filters.delete('erb')
@@ -43,7 +64,6 @@ describe Resir::Site, 'Rack Adapter' do
 
     require 'erb'
     Resir.filters.erb = lambda { |text| ERB.new(text).result(binding) }
-    Resir.extensions.erb = nil
     response = @request.get 'home'
     response.status.should == 200
     response.body.should == %{<%= "hello there!" %>\n}

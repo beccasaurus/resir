@@ -9,8 +9,12 @@ class Resir::Site
     @request = Rack::Request.new @env
     @response = Rack::Response.new # http://rack.rubyforge.org/doc/classes/Rack/Response.html
 
-    @path = @env.PATH_INFO
-    @template = get_template @path
+    @path = @env.PATH_INFO.sub(/^\//,'').sub(/\/$/,'')
+    unless @path.empty?
+      @template = get_template @path
+    else
+      Resir.directory_index.find { |name| @template = get_template name }
+    end
 
     unless @template
       @response.status = 404
