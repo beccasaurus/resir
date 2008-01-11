@@ -1,6 +1,21 @@
 class Resir::Site
   include IndifferentVariableHash
 
+  def call env
+    require 'rubygems'
+    require 'rack'
+
+    @env = env
+    @request = Rack::Request.new @env
+    @response = Rack::Response.new # http://rack.rubyforge.org/doc/classes/Rack/Response.html
+
+    # [ 200, {}, "Hello World!" ]
+    @response.status = 200
+    @response['Content-Type'] = 'text/html'
+    @response.body = "Hello World!"
+    @response.finish
+  end
+
   def initialize root_dir
     @variables = {}
     self.root_directory = root_dir
