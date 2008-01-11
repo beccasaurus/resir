@@ -9,10 +9,17 @@ class Resir::Site
     @request = Rack::Request.new @env
     @response = Rack::Response.new # http://rack.rubyforge.org/doc/classes/Rack/Response.html
 
-    # [ 200, {}, "Hello World!" ]
-    @response.status = 200
-    @response['Content-Type'] = 'text/html'
-    @response.body = "Hello World!"
+    @path = @env.PATH_INFO
+    @template = get_template @path
+
+    unless @template
+      @response.status = 404
+      @response.body = "File Not Found: #{@path}"
+    else
+      @response.body = render_template @template
+    end
+
+    # @response['Content-Type'] = 'text/html'
     @response.finish
   end
 
@@ -29,6 +36,10 @@ class Resir::Site
     eval File.read(siterc) unless not File.file?siterc # because load can't get to our instance!
   end
 
+  def render_template name
+    File.read template_realpath(name)
+  end
+
   def get_template name
     looking_for = File.join template_rootpath, name 
     return template_basename(looking_for) if File.file?looking_for
@@ -38,7 +49,11 @@ class Resir::Site
     File.join self.root_directory, self.template_directory
   end
   def template_basename name
-      name.sub "#{template_rootpath}/", ''
+    return name if name.nil? or name.empty?
+    name.sub "#{template_rootpath}/", ''
+  end
+  def template_realpath name
+    "#{template_rootpath}/#{name}"
   end
 
 end

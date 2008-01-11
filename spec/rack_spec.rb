@@ -11,7 +11,7 @@ describe Resir::Site, 'Rack Adapter' do
   end
 
   it 'should respond to #call' do
-    response = @site.call %w(empty environment)
+    response = @site.call Rack::MockRequest::env_for '/some/path'
     response.should be_a_kind_of(Array)
     response.length.should == 3
     response.first.should be_a_kind_of(Fixnum)
@@ -25,6 +25,18 @@ describe Resir::Site, 'Rack Adapter' do
     response.status.should be_a_kind_of(Fixnum)
     response.headers.should be_a_kind_of(Hash)
     response.body.should be_a_kind_of(String)
+  end
+
+  it 'should 200 if file found' do
+    response = @request.get 'elf'
+    response.status.should == 200
+    response.body.should include('hello from the elf')
+  end
+
+  it 'should 404 if file not found' do
+    response = @request.get 'bacon'
+    response.status.should == 404
+    response.body.should include('File Not Found')
   end
 
 end
