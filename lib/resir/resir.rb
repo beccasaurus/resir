@@ -35,7 +35,7 @@ class Resir
   def self.sites *dirs; get_sites *dirs; end
 
   def self.find_site_dirs in_this_directory
-    Dir[ File.join( in_this_directory, '**', Resir.site_rc_file ) ].collect{|rc| File.dirname rc }  
+    Dir[ File.join( in_this_directory, '**', Resir.rc_file ) ].collect{|rc| File.dirname rc }  
   end
 
   def self.get_extensions filename

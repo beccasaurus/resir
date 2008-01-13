@@ -29,8 +29,6 @@ class Resir::Site
 
   def initialize root_dir
     @variables = {}
-    self.root_directory = root_dir
-    initialize_variables
 
     self.variables.instance_eval {
       # don't set equal here, just return from Resir.vars if exists there
@@ -51,12 +49,10 @@ class Resir::Site
       alias method_missing_without_fallback method_missing
       alias method_missing method_missing_with_fallback
     }
-  end
 
-  def initialize_variables
-    # set default variables to all of the Resir.site_* variables
-    Resir.keys.grep(/^site_/).each { |key| @variables[key.sub(/^site_/,'')] = Resir[key] }
-    siterc = File.join self.root_directory, Resir.site_rc_file
+    self.root_directory = root_dir
+
+    siterc = File.join self.root_directory, Resir.rc_file
     eval File.read(siterc) unless not File.file?siterc # because load can't get to our instance!
   end
 

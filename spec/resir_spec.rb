@@ -25,8 +25,8 @@ describe Resir do
   end
 
   it "should have default config settings" do
-    Resir.site_rc_file.should == '.siterc'
-    Resir.site_public_directory.should == 'public'
+    Resir.rc_file.should == '.siterc'
+    Resir.public_directory.should == 'public'
   end
 
   it "should allow me to render a full path to a filename" do
