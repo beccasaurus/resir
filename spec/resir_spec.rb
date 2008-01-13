@@ -29,6 +29,12 @@ describe Resir do
     Resir.site_public_directory.should == 'public'
   end
 
+  it "should allow me to render a full path to a filename"
+  it "should allow me to render a template string String (including a filename)"
+  it "should allow me to render a template string String (including an array of extensions)"
+  it "should allow me to render a template string String (including a #callable filter/extension)"
+  it "should allow me to render a template string String (including a an array of #callable filters/extensions)"
+
   # make a few more example dirs and confirm sites all load (use 1 top lvl and 2/3 subdirs)
   it "should return an Array of Resir::Site's from *directories"
 

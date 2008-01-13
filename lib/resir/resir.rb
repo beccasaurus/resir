@@ -1,7 +1,6 @@
 class Resir
   meta_include IndifferentVariableHash
 
-  # load ~/.resirrc if it exists ( path is not customizable )
   def self.initialize
     @variables ||= {}
     load 'resir/config.rb'
