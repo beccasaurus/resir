@@ -19,39 +19,12 @@ describe Resir::Site, 'Rack Adapter' do
     # response.last.should be_a_kind_of(String) # how to do an OR to, otherwise, check responds_to?:body or something?
   end
 
-  it 'should respont to a Rack::MockRequest' do
+  it 'should respond to a Rack::MockRequest' do
     response = @request.get '/some/path'
     response.should be_a_kind_of(Rack::MockResponse)
     response.status.should be_a_kind_of(Fixnum)
     response.headers.should be_a_kind_of(Hash)
     response.body.should be_a_kind_of(String)
-  end
-
-  it 'should 200 if file found' do
-    response = @request.get 'elf'
-    response.status.should == 200
-    response.body.should include('hello from the elf')
-  end
-
-  it 'should 200 if file found (with leading slash)' do
-    response = @request.get '/elf'
-    response.status.should == 200
-    response.body.should include('hello from the elf')
-  end
-
-  it 'should 200 if file found (with trailing slash)' do
-    response = @request.get 'elf/'
-    response.status.should == 200
-    response.body.should include('hello from the elf')
-  end
-
-  it 'should support directory_index' do
-    require 'erb'
-    Resir.filters.erb = lambda { |text| ERB.new(text).result(binding) }
-    Resir.extensions.erb = lambda { |text| Resir.filters.erb.call text }
-    response = @request.get '/'
-    response.status.should == 200
-    response.body.should == %{Hello From Index\n}
   end
 
   # move to filters and extensions spec ?
@@ -63,21 +36,15 @@ describe Resir::Site, 'Rack Adapter' do
     response.body.should == %{<%= "hello there!" %>\n}
 
     require 'erb'
-    Resir.filters.erb = lambda { |text| ERB.new(text).result(binding) }
+    Resir.filters.erb = lambda { |text,binding| ERB.new(text).result(binding) }
     response = @request.get 'home'
     response.status.should == 200
     response.body.should == %{<%= "hello there!" %>\n}
 
-    Resir.extensions.erb = lambda { |text| Resir.filters.erb.call text }
+    Resir.extensions.erb = lambda { |text,binding| Resir.filters.erb.call text,binding }
     response = @request.get 'home'
     response.status.should == 200
     response.body.should == %{hello there!\n}
-  end
-
-  it 'should 404 if file not found' do
-    response = @request.get 'bacon'
-    response.status.should == 404
-    response.body.should include('File Not Found')
   end
 
 end

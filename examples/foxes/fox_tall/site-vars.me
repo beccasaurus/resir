@@ -1,0 +1,22 @@
+<% require 'cgi' %>
+<% begin %>
+
+Variables
+=========
+
+Resir Variables
+---------------
+
+<% Resir.variables.each do |key,value| %>
+ * `<%= key %>` => `<%= value.inspect %>`
+<% end %>
+
+Site Variables
+--------------
+
+    @sites ?
+<%= @env.inspect %>
+
+<% rescue Exception => ex %>
+<br /><%= ex %>
+<% end %>

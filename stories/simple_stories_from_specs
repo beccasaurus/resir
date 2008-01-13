@@ -1,0 +1,48 @@
+Example website tests moved from RSpec tests
+
+Story: More example website output tests
+
+  I wrote these initially in RSpec but 
+  these fit perfectly into stories
+
+  Scenario: Should output and have 200 status if file found
+
+    Given I goto site: ambrose/starmonkey
+    When I visit elf
+    Then I should see 'hello from the elf'
+    And the status should be 200
+
+  Scenario: Should output with 200 if file found (with leading slash)
+
+    Given I goto site: ambrose/starmonkey
+    When I visit /elf
+    Then I should see 'hello from the elf'
+    And the status should be 200
+
+  Scenario: Should output with 200 if file found (with trailing slash)
+
+    Given I goto site: ambrose/starmonkey
+    When I visit elf/
+    Then I should see 'hello from the elf'
+    And the status should be 200
+
+  Scenario: Should support directory_index
+
+    Given I goto site: ambrose/starmonkey
+    When I visit /
+    Then the output should be 'Hello From Index'
+    And the status should be 200
+
+  Scenario: Should have access to instance variables
+
+    Given I goto site: ambrose/starmonkey
+    When I visit print-env
+    Then the output should be 'print-env'
+    And the status should be 200
+
+  Scenario: Should 4040 if file not found
+
+    Given I goto site: ambrose/starmonkey
+    When I visit chunky-bacon
+    Then I should see 'file NOT found'
+    And the status should be 404

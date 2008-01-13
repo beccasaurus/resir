@@ -43,7 +43,7 @@ class Resir::Site
   def render_template name
     rendered = File.read template_realpath(name)
     Resir::get_extensions(name).each do |ext|
-      rendered = Resir.extensions[ext].call(rendered) if Resir.extensions.include?ext and Resir.extensions[ext].respond_to?:call
+      rendered = Resir.extensions[ext].call(rendered,binding) if Resir.extensions.include?ext and Resir.extensions[ext].respond_to?:call
     end
     rendered
   end
@@ -54,7 +54,7 @@ class Resir::Site
     template_basename Dir["#{looking_for}.*"].sort.select{ |match| File.file?match }.first
   end
   def template_rootpath
-    File.join self.root_directory, self.template_directory
+    File.join( self.root_directory, self.template_directory ).sub /\/$/,''
   end
   def template_basename name
     return name if name.nil? or name.empty?
