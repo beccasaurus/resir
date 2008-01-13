@@ -1,4 +1,9 @@
- require 'rake/rdoctask'
+require 'config/requirements'
+require 'config/hoe' # setup Hoe + all gem configuration
+
+Dir['tasks/**/*.rake'].each { |rake| load rake } 
+
+require 'rake/rdoctask'
 
 Rake::RDocTask.new do |rdoc|
       # files = ['README', 'LICENSE', 'CHANGELOG', 'lib/**/*.rb', 'doc/**/*.rdoc', 'test/*.rb']

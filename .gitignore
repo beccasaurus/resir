@@ -1,2 +1,5 @@
 *.swp
 doc/*
+website/*.html
+website/**/*.html
+pkg/*

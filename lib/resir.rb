@@ -1,5 +1,6 @@
-$:.unshift File.expand_path(File.dirname(__FILE__))
+$:.unshift File.dirname(__FILE__)
 
+require 'resir/version'
 require 'resir/extensions'  # pre-requisite to most of our code
 require 'resir/resir'       # required by Resir::Site
 require 'resir/site'        # require by config (and Resir, but not on require)
