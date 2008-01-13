@@ -12,4 +12,11 @@ dir = Dir.pwd
 dir = ARGV.shift if ARGV.length > 0
 
 site = Resir::get_sites( dir ).first
-Rack::Handler::Thin.run site
+if site
+  Rack::Handler::Thin.run site
+else
+  puts "No sites found.
+
+** be sure to put a .siterc file in your site's directory. **
+** it can be empty, but this is how we find your site! **"
+end
