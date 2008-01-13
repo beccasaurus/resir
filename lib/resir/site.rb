@@ -20,7 +20,7 @@ class Resir::Site
       @response.status = 404
       @response.body = "File Not Found: #{@path}"
     else
-      @response.body = render_template @template
+      @response.body = render_page @template
     end
 
     # @response['Content-Type'] = 'text/html'
@@ -40,13 +40,21 @@ class Resir::Site
     eval File.read(siterc) unless not File.file?siterc # because load can't get to our instance!
   end
 
-  def render_template name
+  def render_page name
     @site = self
+    @layout = 'layout' # make into a Resir/Site variable ... override at global or site level
+    @content = render_template name
+    layout_template = get_template(@layout) if @layout
+    @content = render_template(layout_template) if @layout and layout_template 
+    @content
+  end
+
+  def render_template name
     rendered = File.read template_realpath(name)
     Resir::get_extensions(name).each do |ext|
       rendered = Resir.extensions[ext].call(rendered,binding) if Resir.extensions.include?ext and Resir.extensions[ext].respond_to?:call
     end
-    rendered
+    rendered.strip
   end
 
   def get_template name

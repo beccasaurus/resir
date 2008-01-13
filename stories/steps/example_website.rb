@@ -23,7 +23,7 @@ steps_for(:example_website) do
   end
 
   Then( "the output should be '$output'" ) do |output|
-    @response.body.should == "#{output}\n"
+    @response.body.should == "#{output}"
   end
 
   Then( "the status should be $status" ) do |status|

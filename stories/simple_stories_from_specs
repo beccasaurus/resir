@@ -31,18 +31,28 @@ Story: More example website output tests
     Given I goto site: ambrose/starmonkey
     When I visit /
     Then the output should be 'Hello From Index'
-    And the status should be 200
 
   Scenario: Should have access to instance variables
 
     Given I goto site: ambrose/starmonkey
     When I visit print-env
     Then the output should be 'print-env'
-    And the status should be 200
 
-  Scenario: Should 4040 if file not found
+  Scenario: Should 404 if file not found
 
     Given I goto site: ambrose/starmonkey
     When I visit chunky-bacon
     Then I should see 'file NOT found'
     And the status should be 404
+
+  Scenario: Should render a layout, if a layout exists
+
+    Given I goto site layout_test
+    When I visit no-layout
+    Then the output should be 'page content'
+
+  Scenario: Should be able to disable a layout
+
+    Given I goto site layout_test
+    When I visit page
+    Then the output should be '>>page content<<'

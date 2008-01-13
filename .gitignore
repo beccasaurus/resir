@@ -3,3 +3,4 @@ doc/*
 website/*.html
 website/**/*.html
 pkg/*
+tmp/*
