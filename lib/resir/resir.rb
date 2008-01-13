@@ -16,16 +16,19 @@ class Resir
   end
   class << self
     attr_accessor :filter_and_extension
+    alias extension_and_filter filter_and_extension ; alias :extension_and_filter= :filter_and_extension=
   end
-  # alias extension_and_filter filter_and_extension
+  def self.filter;        self.filters;       end
+  def self.extension;     self.extensions;    end
+  def self.filter=(v);    self.filters v;     end
+  def self.extension=(v); self.extensions v;  end
 
   def self.initialize
     @variables ||= {}
     load 'resir/config.rb'
     self.filter_and_extension = FilterAndExtension.new
 
-    resirrc = File.expand_path '~/.resirrc'
-    load resirrc if File.file?resirrc
+    load File.expand_path(Resir.user_rc_file) if File.file?File.expand_path(Resir.user_rc_file)
   end
   initialize
 
@@ -35,7 +38,7 @@ class Resir
   def self.sites *dirs; get_sites *dirs; end
 
   def self.find_site_dirs in_this_directory
-    Dir[ File.join( in_this_directory, '**', Resir.rc_file ) ].collect{|rc| File.dirname rc }  
+    Dir[ File.join( in_this_directory, '**', Resir.site_rc_file ) ].collect{|rc| File.dirname rc }  
   end
 
   def self.get_extensions filename

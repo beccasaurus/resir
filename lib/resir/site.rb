@@ -52,7 +52,7 @@ class Resir::Site
 
     self.root_directory = root_dir
 
-    siterc = File.join self.root_directory, Resir.rc_file
+    siterc = File.join self.root_directory, Resir.site_rc_file
     eval File.read(siterc) unless not File.file?siterc # because load can't get to our instance!
   end
 

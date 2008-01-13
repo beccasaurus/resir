@@ -2,6 +2,19 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe Resir do
 
+  it 'should have access to filter(s) and extension(s) (without plural)' do
+    Resir.filters.my_test = lambda { |t,b| "hello world" }
+    Resir.filters.keys.should include('my_test')
+    Resir.filter.keys.should include('my_test')
+    Resir.filter.another_test = lambda { |t,b| "hi there" }
+    Resir.filter.keys.should include('another_test')
+    Resir.filters.keys.should include('another_test')
+
+    Resir.extensions.my_test = lambda { |t,b| "hello world" }
+    Resir.extensions.keys.should include('my_test')
+    Resir.extension.keys.should include('my_test')
+  end
+
   it "should have an initialized variable Hash" do
     Resir::variables.should be_a_kind_of(Hash)
     Resir::vars.should be_a_kind_of(Hash)
@@ -25,7 +38,7 @@ describe Resir do
   end
 
   it "should have default config settings" do
-    Resir.rc_file.should == '.siterc'
+    Resir.site_rc_file.should == '.siterc'
     Resir.public_directory.should == 'public'
   end
 
