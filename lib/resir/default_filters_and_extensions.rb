@@ -8,7 +8,10 @@ def lib_available? lib
 end
 
 if lib_available? 'erb'
-  Resir.filter_and_extension.erb = lambda { |text,binding| ERB.new(text).result(binding) } 
+  Resir.filter_and_extension.erb = lambda { |text,binding| 
+  puts "rendering ERB ... instance vars: #{instance_variables.inspect}"
+    puts "site: #{@site}"
+  ERB.new(text).result(binding) } 
 end
 
 if lib_available? 'maruku'
@@ -29,7 +32,8 @@ end
 if lib_available? 'markaby'
   Resir.filter_and_extension.mab = lambda { |text,binding|
     assigns = {}
-    instance_variables.each do |name|
+    @site = eval('@site',binding)
+    eval('instance_variables',binding).each do |name|
       assigns[ name[1..-1] ] =  instance_variable_get(name)
     end
     mab = Markaby::Builder.new(assigns, self)
