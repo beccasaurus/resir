@@ -53,14 +53,14 @@ class Resir
   def self.render_with_filters string, binding, *filters
     rendered = string
     filters.each { |callable| rendered = callable[rendered,binding] }
-    rendered
+    rendered.strip
   end
   def self.render_with_extensions string, binding, *extensions
     rendered = string
     extensions.each do |ext|
       rendered = Resir.extensions[ext][rendered,binding] if Resir.extensions.include?ext
     end
-    rendered
+    rendered.strip
   end
   def self.render_file filename, binding=binding()
     raise "File not found to render: #{filename}" unless File.file?filename
@@ -72,6 +72,10 @@ class Resir
   # this puppy "simply" proxies to more specific render methods
   #
   # in a stronly typed language, this would be broken up into abunchof overloads
+  #
+  # ....... UPDATE this (and all other things that clal Resir.render) to make 
+  #         binding optional and the LAST argument, not the second.
+  #
   def self.render *args
     if args.first.is_a?String
       if args.length > 2                            # render 'str', *args
