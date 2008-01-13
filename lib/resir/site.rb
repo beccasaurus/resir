@@ -79,7 +79,7 @@ class Resir::Site
   end
 
   def render_template name
-    name = get_template(name) unless File.file?(File.join template_rootpath, name)
+    name = get_template(name) unless File.file?(File.join(template_rootpath, name))
     Resir::render_file template_realpath(name), binding()
   end
   alias render render_template

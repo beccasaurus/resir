@@ -9,6 +9,7 @@ config/hoe.rb
 config/requirements.rb
 lib/resir.rb
 lib/resir/config.rb
+lib/resir/default_filters_and_extensions.rb
 lib/resir/extensions.rb
 lib/resir/resir.rb
 lib/resir/site.rb
