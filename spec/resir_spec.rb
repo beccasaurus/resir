@@ -29,11 +29,40 @@ describe Resir do
     Resir.site_public_directory.should == 'public'
   end
 
-  it "should allow me to render a full path to a filename"
-  it "should allow me to render a template string String (including a filename)"
-  it "should allow me to render a template string String (including an array of extensions)"
-  it "should allow me to render a template string String (including a #callable filter/extension)"
-  it "should allow me to render a template string String (including a an array of #callable filters/extensions)"
+  it "should allow me to render a full path to a filename" do
+    Resir.filter_and_extension.demo = lambda { |text,b| text.gsub('spam','chunky') }
+    Resir.filter_and_extension.test = lambda { |text,b| text.gsub('eggs','bacon') }
+    # 'the spam and eggs are yummy'
+    file = File.dirname(__FILE__) + '/../examples/misc/render-me.test.demo'
+    Resir::render(file,binding).should == 'the chunky and bacon are yummy'
+  end
+
+  it "should allow me to render a template string String (including arguments of extension names)" do
+    Resir.filter_and_extension.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
+    Resir::render('hello <%= "there" %>', binding, 'erb').should == 'hello there'
+  end
+  
+  it "should allow me to render a template string String (including an array of extension names)" do
+    Resir.filter_and_extension.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
+    Resir::render('hello <%= "there" %>', binding, ['erb']).should == 'hello there'
+  end
+
+  it "should allow me to render a template string String (including a #callable filter/extension)" do
+    my_filter = lambda { |text,b| ">>>>#{text}<<<<" }
+    Resir::render("hi there", binding, my_filter).should == '>>>>hi there<<<<'
+  end
+
+  it "should allow me to render a template string String (including a an array of #callable filters/extensions)" do
+    my_filter = lambda { |text,b| ">>>>#{text}<<<<" }
+    my_other_filter = lambda { |text,b| "[ #{text} ]" }
+    Resir::render("hi there", binding, [my_filter, my_other_filter]).should == '[ >>>>hi there<<<< ]'
+  end
+
+  it "should allow me to render a template string String (including arguments of #callable filters/extensions)" do
+    my_filter = lambda { |text,b| ">>>>#{text}<<<<" }
+    my_other_filter = lambda { |text,b| "[ #{text} ]" }
+    Resir::render("hi there", binding, my_filter, my_other_filter ).should == '[ >>>>hi there<<<< ]'
+  end
 
   # make a few more example dirs and confirm sites all load (use 1 top lvl and 2/3 subdirs)
   it "should return an Array of Resir::Site's from *directories"
