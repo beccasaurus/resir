@@ -5,7 +5,6 @@ class Resir
   # or Resir.extension_and_filter
   class FilterAndExtension
     def method_missing name, *a
-      puts "FilterAndExtension.#{name} #{a.inspect}"
       if name.to_s[/=$/]
         name = name.to_s.sub(/=$/, '')
         Resir.filters[name] = a.first

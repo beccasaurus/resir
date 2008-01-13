@@ -31,6 +31,26 @@ class Resir::Site
     @variables = {}
     self.root_directory = root_dir
     initialize_variables
+
+    self.variables.instance_eval {
+      # don't set equal here, just return from Resir.vars if exists there
+      def method_missing_with_fallback name, *args
+        return method_missing_without_fallback(name, *args) if name.to_s[/=$/]
+
+        super_result = method_missing_without_fallback name, *args
+        return super_result if super_result and not super_result.nil?
+
+        name = name.to_s.sub( /=$/, '')
+        if Resir.variables.keys.include?name
+          Resir.variables[name]
+        else
+          raise Exception.new("dunno what to do with #{name} => #{args.inspect}")
+        end
+      end
+      # alias_method_chain :method_missing, :fallback
+      alias method_missing_without_fallback method_missing
+      alias method_missing method_missing_with_fallback
+    }
   end
 
   def initialize_variables

@@ -21,4 +21,19 @@ describe Resir::Site do
     site.get_template('elf').should == 'elf'
   end
 
+  it 'should fall back to Resir.vars for config variables' do
+    site = Resir::Site.new 'examples/ambrose/starmonkey'
+    site.vars.delete 'fallback'
+    site.vars.keys.should_not include('fallback')
+    Resir.fallback = 'Site Should Fall Back To Me'
+    site.fallback.should == 'Site Should Fall Back To Me'
+    site.fallback = 'this is the SITES fallback'
+    site.fallback.should == 'this is the SITES fallback'
+    site.variables.delete 'fallback'
+    site.fallback.should == 'Site Should Fall Back To Me'
+    Resir.delete 'fallback'
+    site.fallback = 'new sites fallback'
+    site.fallback.should == 'new sites fallback'
+  end
+
 end
