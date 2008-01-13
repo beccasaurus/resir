@@ -2,6 +2,14 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe Resir do
 
+  it 'should get file extensions for filenames, from last to first' do
+    Resir::get_extensions('index.mkd.erb').should == %w(erb mkd)
+    Resir::get_extensions('index').should == []
+    Resir::get_extensions('index.index').should == ['index']
+    Resir::get_extensions('haml-test.haml').should == ['haml']
+    Resir::get_extensions('haml-test.mkd.html.haml').should == %w(haml html mkd)
+  end
+
   it 'should have access to filter(s) and extension(s) (without plural)' do
     Resir.filters.my_test = lambda { |t,b| "hello world" }
     Resir.filters.keys.should include('my_test')

@@ -22,8 +22,8 @@ if lib_available? 'redcloth'
 end
 
 if lib_available? 'haml'
-  Resir.filter_and_extension.haml = lambda { |text,binding| Haml::Engine.new(text) }
-  Resir.filter_and_extension.sass = lambda { |text,binding| Sass::Engine.new(text) }
+  Resir.filter_and_extension.haml = lambda { |text,binding| Haml::Engine.new(text).render }
+  Resir.filter_and_extension.sass = lambda { |text,binding| Sass::Engine.new(text).render }
 end
 
 if lib_available? 'markaby'

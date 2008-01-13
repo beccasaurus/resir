@@ -45,7 +45,9 @@ class Resir
     # trick to make sure we get some extensions, if missing them ... try to move this latter ...
     self.initialize if Resir.extensions.length == 0
     filename = File.basename filename
-    ( filename.split('.') - [ filename[/(\w+)/] ] ).reverse
+    extensions = filename.split('.')
+    without_extensions = extensions.shift
+    extensions.reverse
   end
 
   def self.render_with_filters string, binding, *filters
