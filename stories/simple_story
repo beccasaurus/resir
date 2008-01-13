@@ -38,3 +38,15 @@ Story: Example website output tests
     Given I goto site for_stories
     When I visit site-variable-test
     Then I should see 'root path: examples/for_stories'
+
+  Scenario: Be able to call render partials/page
+
+    Given I goto site partials_test
+    When I visit render-test
+    Then the output should be 'page says: hello from partial!'
+
+  Scenario: Be able to call partial page
+
+    Given I goto site partials_test
+    When I visit partial-test
+    Then the output should be 'page says: hello from partial!'

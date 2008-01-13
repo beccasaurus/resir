@@ -57,6 +57,19 @@ class Resir::Site
   end
 
   def render_page name
+    # define some neato methods ...
+    #
+    # need to clean up ... and needs to take the template root into account??
+    #
+    root = self.root_directory + '/'
+    Dir["#{root}*"].collect { |o| o.sub(root,'') }.select { |o| not o.include?'.' }.
+    select{|o| File.directory?"#{root}#{o}" }.each do |directory| 
+      metaclass.send(:define_method, directory) { |name| render "#{directory}/#{name}" }
+      if directory[/s$/]
+        metaclass.send(:define_method, directory.sub(/s$/,'')) { |name| render "#{directory}/#{name}" }
+      end
+    end
+
     @site = self
     @layout = 'layout' # make into a Resir/Site variable ... override at global or site level
     @content = render_template name
@@ -66,8 +79,10 @@ class Resir::Site
   end
 
   def render_template name
+    name = get_template(name) unless File.file?(File.join template_rootpath, name)
     Resir::render_file template_realpath(name), binding()
   end
+  alias render render_template
 
   def get_template name
     looking_for = File.join template_rootpath, name 
