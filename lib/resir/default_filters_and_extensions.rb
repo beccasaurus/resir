@@ -22,17 +22,29 @@ if lib_available? 'redcloth'
 end
 
 if lib_available? 'haml'
-  Resir.filter_and_extension.haml = lambda { |text,binding| Haml::Engine.new(text).render }
+  Resir.filter_and_extension.haml = lambda { |text,binding| Haml::Engine.new(text).render(binding) }
   Resir.filter_and_extension.sass = lambda { |text,binding| Sass::Engine.new(text).render }
 end
 
 if lib_available? 'markaby'
-  def markaby(&proc)
+  Resir.filter_and_extension.mab = lambda { |text,binding|
     assigns = {}
-      instance_variables.each do |name|
-        assigns[ name[1..-1] ] =  instance_variable_get(name)
-      end
-    Markaby::Builder.new(assigns, self).capture(&proc)
-  end
-  Resir.filter_and_extension.mab = lambda { |text,binding| markaby { eval text  }}
+    instance_variables.each do |name|
+      assigns[ name[1..-1] ] =  instance_variable_get(name)
+    end
+    mab = Markaby::Builder.new(assigns, self)
+    def mab.method_missing_with_site name, *args
+       if @site.respond_to?name
+         @site.send( name, *args )
+       else
+          method_missing_without_site( name, *args )
+       end
+    end
+    mab.instance_eval do
+      # alias_method_chain :method_missing, :site
+      alias method_missing_without_site method_missing
+      alias method_missing method_missing_with_site
+    end
+    mab.capture { eval text }
+  }
 end
