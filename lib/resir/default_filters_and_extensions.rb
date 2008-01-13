@@ -32,13 +32,13 @@ end
 if lib_available? 'markaby'
   Resir.filter_and_extension.mab = lambda { |text,binding|
     assigns = {}
-    @site = eval('@site',binding)
     eval('instance_variables',binding).each do |name|
-      assigns[ name[1..-1] ] =  instance_variable_get(name)
+      instance_variable_set name, eval(name,binding)
+      assigns[ name[1..-1] ] = eval(name,binding)
     end
     mab = Markaby::Builder.new(assigns, self)
-    def mab.method_missing_with_site name, *args
-       if @site.respond_to?name
+    def mab.method_missing_with_site( name, *args )
+       if @site.respond_to?(name)
          @site.send( name, *args )
        else
           method_missing_without_site( name, *args )
