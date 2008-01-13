@@ -1,0 +1,46 @@
+#! /bin/bash
+
+if [[ "$UID" != "0" ]] ; then
+	echo "you must run this script as root (or using sudo)"
+	exit
+fi
+
+# aptitude update
+# aptitude install -y apache2 ruby rubygems ruby1.8-dev irb
+# gem update
+# gem update --system
+
+# fix rubygems if update --system broke it (on version versions of OSX and Ubuntu)
+if [[ -n "$(gem help 2>&1 | grep '/usr/bin/gem:23: uninitialized')" ]] ; then 
+        echo "Fixing RubyGems ..."
+	GEM_BIN="$(which gem)"
+	TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
+	cp "$GEM_BIN" "${GEM_BIN}_backup_$TIMESTAMP" # backup original
+        cat "$GEM_BIN" | sed "s/require 'rubygems'/require 'rubygems'\nrequire 'rubygems\/gem_runner'/g" > "/tmp/gem_$TIMESTAMP"
+	cp -f "/tmp/gem_$TIMESTAMP" "$GEM_BIN" # overwrite original
+
+	if [[ -z "$(gem help 2>&1 | grep '/usr/bin/gem:23: uninitialized')" ]] ; then
+		echo "RubyGems [OK]"
+	else
+		echo "Oops!  There's still a problem with your RubyGems!  exiting ..."
+		exit
+	fi
+else
+        echo "RubyGems [OK]"
+fi
+
+# gem install thin
+# gem install resir --source http://remi.org
+EXAMPLE_DIR="/var/www/resir-example"
+mkdir "$EXAMPLE_DIR"
+echo -e "require 'resir/default_filters_and_extensions'" > "${EXAMPLE_DIR}/.siterc"
+echo -e "Welcome to your Resir Site!\n\nThe time is <%= Time.now %>" > "${EXAMPLE_DIR}/index.erb"
+echo -e "RewriteEngine On\nRewriteRule ^(.*)$ resir.cgi" > "${EXAMPLE_DIR}/.htaccess"
+#echo "
+#<Directory ${EXAMPLE_DIR}>
+#  Options +ExecCGI
+#  AddHandler cgi-script .cgi
+#  AllowOverride All
+#</Directory>" >> /etc/apache2/sites-enabled/000-default
+a2enmod rewrite
+/etc/init.d/apache2 restart
