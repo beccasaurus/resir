@@ -32,3 +32,9 @@ Story: Example website output tests
     Given I goto site for_stories
     When I visit /render-me
     Then I should see 'rendered by erb!'
+
+  Scenario: Have access to Resir::Site as @site
+ 
+    Given I goto site for_stories
+    When I visit site-variable-test
+    Then I should see 'root path: examples/for_stories'
