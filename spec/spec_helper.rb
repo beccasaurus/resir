@@ -1,19 +1,11 @@
 require File.dirname(__FILE__) + '/../lib/resir'
 
-begin
-  require 'spec'
-rescue LoadError
-  require 'rubygems'
-  gem 'rspec'
-  require 'spec'
-end
-
-# when load gets called to load in our ~/.resirrc, don't let it!
-def load_with_ignorance *args
+def load_interceptor *args
   if args.first == File.expand_path('~/.resirrc')
     true
   else
-    load_without_ignorance *args
+    real_load args.first
   end
 end
-Module.alias_method_chain :load, :ignorance
+alias real_load load unless defined?real_load
+alias load load_interceptor
