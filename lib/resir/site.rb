@@ -46,7 +46,8 @@ class Resir::Site
         if Resir.variables.keys.include?name
           Resir.variables[name]
         else
-          raise Exception.new("dunno what to do with #{name} => #{args.inspect}")
+          # can't seem to find anything, so return nil ( which is HELPFUL, so we can check for nil )
+          nil
         end
       end
       # alias_method_chain :method_missing, :fallback
@@ -104,6 +105,10 @@ class Resir::Site
   end
   def template_realpath name
     "#{template_rootpath}/#{name}"
+  end
+
+  def safe_name
+    self.name.gsub /[^a-zA-Z_]/, ''
   end
 
 end

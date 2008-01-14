@@ -2,6 +2,12 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe Resir::Site do
 
+  it "should have a .safe_name for using in paths and urls" do
+    site = Resir::Site.new 'examples/ambrose/starmonkey'
+    site.name = 'Some Wild! and Crazy? _ Name:!'
+    site.safe_name.should == 'SomeWildandCrazy_Name'
+  end
+
   it "should act like an indifferent Hash" do
     site = Resir::Site.new 'examples/ambrose/starmonkey'
     site.testing = 123

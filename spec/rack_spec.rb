@@ -3,10 +3,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe Resir::Site, 'Rack Adapter' do
 
   before do
-    # >> require 'rack'; site = Resir::Site.new 'examples/ambrose/starmonkey'; request = Rack::MockRequest.new site
-    require 'rubygems'
-    require 'rack'
-    @site = Resir::Site.new 'examples/ambrose/starmonkey'
+    @site    = Resir::Site.new 'examples/ambrose/starmonkey'
     @request = Rack::MockRequest.new @site
   end
 
