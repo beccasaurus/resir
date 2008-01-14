@@ -117,15 +117,35 @@ describe Resir::Server do
     response = request.get '/starmonkey/home'
     response.status.should == 200
 
-    puts "TRYING TO CALL starmonkey / home ... "
     response = request.get 'http://starmonkey/home'
     response.status.should == 200
   end
 
-  it 'should run a single site'
+  it 'should run a single site' do
+    server = Resir::Server.new 'examples/ambrose/starmonkey'
+    request = Rack::MockRequest.new server
 
-  it 'should run multiple sites'
+    response = request.get '/starmonkey'
+    response.status.should == 200
 
-  it 'should display the available sites when hitting any host that does not map to a site'
+    response = request.get '/starmonkey/home'
+    response.status.should == 200
+
+    response = request.get 'http://starmonkey/home'
+    response.status.should == 200
+  end
+
+  it 'should display the available sites when hitting any host that does not map to a site' do
+    server = Resir::Server.new 'examples'
+    request = Rack::MockRequest.new server
+
+    response = request.get 'http://localhost'
+    response.status.should == 200
+    response.body.should include(%{<a href="/starmonkey">starmonkey</a>})
+  end
+
+  it 'should let the site change its name in .siterc'
+
+  it 'should let the site change its urls in .siterc'
 
 end
