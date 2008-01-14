@@ -1,15 +1,19 @@
 class Resir::Site
   include IndifferentVariableHash
 
+  attr_accessor :path_prefix # set from script running if we want to remove a prefix from path
+
   def call env
-    require 'rubygems'
     require 'rack'
 
     @env = env
     @request = Rack::Request.new @env
-    @response = Rack::Response.new # http://rack.rubyforge.org/doc/classes/Rack/Response.html
+    @response = Rack::Response.new
 
-    @path = @env.PATH_INFO.sub(/^\//,'').sub(/\/$/,'')
+    @path = (@env.REQUEST_URI) ? @env.REQUEST_URI.to_s : @env.PATH_INFO.to_s
+    @path = @path.sub(self.path_prefix,'') unless self.path_prefix.nil? or self.path_prefix.empty?
+    @path = @path.sub(/^\//,'').sub(/\/$/,'')
+
     unless @path.empty?
       @template = get_template @path
     else

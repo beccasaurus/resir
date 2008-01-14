@@ -44,3 +44,11 @@ echo -e "RewriteEngine On\nRewriteRule ^(.*)$ resir.cgi" > "${EXAMPLE_DIR}/.htac
 #</Directory>" >> /etc/apache2/sites-enabled/000-default
 a2enmod rewrite
 /etc/init.d/apache2 restart
+
+# this was what i had working:
+# <Directory /var/www/resir-example>
+#     Options +ExecCGI
+#     AddHandler cgi-script .cgi
+#     AllowOverride All 
+#     SetEnv HOME /root
+# </Directory>
