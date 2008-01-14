@@ -4,7 +4,6 @@ class Resir::Site
   attr_accessor :path_prefix # set from script running if we want to remove a prefix from path
 
   def call env
-    require 'rack'
 
     @env = env
     @request = Rack::Request.new @env
@@ -13,6 +12,7 @@ class Resir::Site
     @path = (@env.REQUEST_URI) ? @env.REQUEST_URI.to_s : @env.PATH_INFO.to_s
     @path = @path.sub(self.path_prefix,'') unless self.path_prefix.nil? or self.path_prefix.empty?
     @path = @path.sub(/^\//,'').sub(/\/$/,'')
+    log.info { "#{self.name}#call #{@path}" }
 
     unless @path.empty?
       @template = get_template @path
@@ -54,7 +54,9 @@ class Resir::Site
       alias method_missing method_missing_with_fallback
     }
 
+    # note: trying to ||= self.vars here gets mighty angry!  see what's going on with that.
     self.root_directory = root_dir
+    self.name = File.basename self.root_directory
 
     siterc = File.join self.root_directory, Resir.site_rc_file
     eval File.read(siterc) unless not File.file?siterc # because load can't get to our instance!

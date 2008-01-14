@@ -3,6 +3,8 @@ class Resir
 
   # mini-class for handling Resir.filter_and_extension 
   # or Resir.extension_and_filter
+  #
+  # move out of here or clean up somehow!
   class FilterAndExtension
     def method_missing name, *a
       if name.to_s[/=$/]
@@ -22,14 +24,27 @@ class Resir
   def self.extension;     self.extensions;    end
   def self.filter=(v);    self.filters v;     end
   def self.extension=(v); self.extensions v;  end
+  # END FileterAndExtension
+
+  def self.init_logger # setup a 'log' method we can call from anywhere to access logger
+    eval( %{
+      def log
+        Resir::logger
+      end
+    }, TOPLEVEL_BINDING )
+    log.level = Logger::DEBUG # change from your config files or from ... i dunno.  we'll see.
+    log.datetime_format = "" # "%H:%M:%S" # keep it small and readable, for right now
+    log.info { "Resir::logger initialized" }
+  end
 
   def self.initialize
     @variables ||= {}
     load 'resir/config.rb'
+    init_logger unless defined?log
     self.filter_and_extension = FilterAndExtension.new
-
     load File.expand_path(Resir.user_rc_file) if File.file?File.expand_path(Resir.user_rc_file)
   end
+
   initialize
 
   def self.get_sites *dirs

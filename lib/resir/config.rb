@@ -8,3 +8,5 @@ Resir.directory_index     ||= %w( index home )     # paths to look for when requ
 Resir.site_rc_file        ||= '.siterc'            # path of site-specific config/extension file
 Resir.public_directory    ||= 'public'             # where static files go
 Resir.template_directory  ||= ''                   # where we look for all files to render
+
+Resir.logger              ||= Logger.new STDOUT

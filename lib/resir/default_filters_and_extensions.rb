@@ -8,10 +8,7 @@ def lib_available? lib
 end
 
 if lib_available? 'erb'
-  Resir.filter_and_extension.erb = lambda { |text,binding| 
-  puts "rendering ERB ... instance vars: #{instance_variables.inspect}"
-    puts "site: #{@site}"
-  ERB.new(text).result(binding) } 
+  Resir.filter_and_extension.erb = lambda { |text,binding| ERB.new(text).result(binding) } 
 end
 
 if lib_available? 'maruku'
