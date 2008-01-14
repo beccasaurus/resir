@@ -108,7 +108,7 @@ class Resir::Site
   end
 
   def safe_name       # safe for use in url
-    self.name.gsub /[^a-zA-Z_.-]/, ''
+    self.name.gsub /[^a-zA-Z0-9_.-]/, ''
   end
   def safe_host_name  # safe for use as a host name (safe_name with _ => -)
     self.safe_name.gsub '_', '-'

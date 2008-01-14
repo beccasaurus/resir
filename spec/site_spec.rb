@@ -4,9 +4,9 @@ describe Resir::Site do
 
   it "should have a .safe_name and .safe_host_name for using in paths and urls" do
     site = Resir::Site.new 'examples/ambrose/starmonkey'
-    site.name = 'Some Wild! .and - Crazy? _ Name:!'
-    site.safe_name.should == 'SomeWild.and-Crazy_Name'
-    site.safe_host_name.should == 'SomeWild.and-Crazy-Name'
+    site.name = 'Some 5 Wild! .and - Crazy? _ Name:!'
+    site.safe_name.should == 'Some5Wild.and-Crazy_Name'
+    site.safe_host_name.should == 'Some5Wild.and-Crazy-Name'
   end
 
   it "should act like an indifferent Hash" do
