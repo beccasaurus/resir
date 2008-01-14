@@ -3,7 +3,7 @@ class Resir::Server
   attr_accessor :sites, :urls
 
   def self.default_paths( site )
-    [ "http://#{site.safe_name}", "/#{site.safe_name}" ]
+    [ "http://#{site.safe_name}/", "/#{site.safe_name}" ]
   end
   
   def initialize *dirs

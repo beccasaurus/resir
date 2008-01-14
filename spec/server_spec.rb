@@ -24,7 +24,7 @@ describe Resir::Server do
     site = Resir::Site.new 'examples/ambrose/starmonkey'
     site.name = '*! crazy _ star _ monkey !*'
     site.safe_name.should == 'crazy_star_monkey'
-    Resir::Server::default_paths(site).should == ['http://crazy_star_monkey','/crazy_star_monkey']
+    Resir::Server::default_paths(site).should == ['http://crazy_star_monkey/','/crazy_star_monkey']
   end
 
   it 'should find a single site when passed its directory' do
@@ -37,7 +37,7 @@ describe Resir::Server do
     server = Resir::Server.new 'examples/ambrose/starmonkey'
     server.sites.length.should == 1
     server.urls.length.should == 2
-    server.urls.keys.should include('http://starmonkey')
+    server.urls.keys.should include('http://starmonkey/')
     server.urls.keys.should include('/starmonkey')
   end
 
@@ -48,9 +48,9 @@ describe Resir::Server do
     server = Resir::Server.new 'examples/ambrose'
     server.sites.length.should == 3
     server.urls.length.should == 6
-    server.urls.keys.should include('http://starmonkey')
+    server.urls.keys.should include('http://starmonkey/')
     server.urls.keys.should include('/starmonkey')
-    server.urls.keys.should include('http://pet_ham')
+    server.urls.keys.should include('http://pet_ham/')
     server.urls.keys.should include('/pet_ham')
   end
 
@@ -60,9 +60,9 @@ describe Resir::Server do
       "#{prefix}/the_elf/pet_ham"
     server.sites.length.should == 3
     server.urls.length.should == 6
-    server.urls.keys.should include('http://starmonkey')
+    server.urls.keys.should include('http://starmonkey/')
     server.urls.keys.should include('/starmonkey')
-    server.urls.keys.should include('http://pet_ham')
+    server.urls.keys.should include('http://pet_ham/')
     server.urls.keys.should include('/pet_ham')
   end
 
@@ -72,9 +72,9 @@ describe Resir::Server do
       "#{prefix}/the_elf/pet_ham", "#{prefix}", "/i/no/exist", "#{prefix}/starmonkey"
     server.sites.length.should == 3
     server.urls.length.should == 6
-    server.urls.keys.should include('http://starmonkey')
+    server.urls.keys.should include('http://starmonkey/')
     server.urls.keys.should include('/starmonkey')
-    server.urls.keys.should include('http://pet_ham')
+    server.urls.keys.should include('http://pet_ham/')
     server.urls.keys.should include('/pet_ham')
   end
 
