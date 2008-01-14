@@ -178,4 +178,16 @@ describe Resir::Server do
     response.status.should == 200
   end
 
+  it 'should actually work' do
+    server = Resir::Server.new 'examples'
+    request = Rack::MockRequest.new server
+
+    request.get('/starmonkey').body.should include('Hello From ')
+    request.get('/starmonkey/elf').body.should include('hello from the elf')
+    request.get('http://starmonkey/elf').body.should include('hello from the elf')
+    request.get('/for_stories/hello-story').body.should include('hello stories!')
+    request.get('/I_Changed_My_Name').body.should include('welcome to change_my_name')
+    request.get('/my-cool-path').body.should include('welcome to change_my_url')
+  end
+
 end

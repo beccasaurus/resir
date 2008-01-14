@@ -12,11 +12,25 @@ class Resir::Site
     @path = (@env.REQUEST_URI) ? @env.REQUEST_URI.to_s : @env.PATH_INFO.to_s
     @path = @path.sub(self.path_prefix,'') unless self.path_prefix.nil? or self.path_prefix.empty?
     @path = @path.sub(/^\//,'').sub(/\/$/,'')
-    log.info { "#{self.name}#call #{@path}" }
 
-    unless @path.empty?
-      @template = get_template @path
-    else
+    @template = (@path.empty?) ? nil : get_template(@path)
+
+    # go thru the urls that start with '/' and see if our current path matches one
+    # in which case we should remove that prefix and try again
+    if @template.nil? and not @path.nil? and not @path.empty?
+      self.urls ||= Resir::Server::default_paths( self )
+      self.urls.select{ |url| url[/^\//] }.each do |url|
+        url = url.sub /^\//,''
+        if @path.index(url) == 0
+          @path = @path.sub url, ''
+          @template = get_template @path
+          break
+        end
+      end
+    end
+
+    # check for directory_index
+    if @template.nil? and @path.empty?
       Resir.directory_index.find { |name| @template = get_template name }
     end
 
@@ -92,6 +106,8 @@ class Resir::Site
   alias render render_template
 
   def get_template name
+    return nil if name.nil? or name.empty?
+    log.debug { "#{self.name} #get_template '#{name}'" }
     looking_for = File.join template_rootpath, name 
     return template_basename(looking_for) if File.file?looking_for
     template_basename Dir["#{looking_for}.*"].sort.select{ |match| File.file?match }.first

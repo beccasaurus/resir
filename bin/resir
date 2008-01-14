@@ -3,19 +3,13 @@ require File.dirname(__FILE__) + '/../lib/resir'
 require 'rubygems'
 require 'thin'
 
-puts "resir: " + ARGV.inspect + "\n\n"
-puts "right now, this will simply take the first site it "
-puts "finds in the directory you pass (or working directory)"
-puts "and run it\n\n"
-
-dir = Dir.pwd
-dir = ARGV.shift if ARGV.length > 0
-
-site = Resir::get_sites( dir ).first
-if site
-  Rack::Handler::Thin.run site
+server = Resir::Server.new *ARGV
+unless server.sites.empty?
+  Rack::Handler::Thin.run server
 else
   puts "No sites found.
+
+Usage:  #{$0} directory, *directories  [recursively finds sites]
 
 ** be sure to put a .siterc file in your site's directory. **
 ** it can be empty, but this is how we find your site! **"

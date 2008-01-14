@@ -18,7 +18,7 @@ class Resir::Server
     @sites.each do |site|
       site_paths = site.urls || Resir::Server::default_paths(site)
       site_paths.each do |path|
-        @urls.merge! ({ path => site })
+        @urls.merge!({ path => site })
       end
     end
 
@@ -59,7 +59,7 @@ class Resir::Server
         # host = (env.HTTP_HOST)       ? env.HTTP_HOST       : env.SERVER_NAME
         
         if path == '/'
-          return self.site_index.call *args
+          return self.site_index.call(*args)
         end
       end
     end
