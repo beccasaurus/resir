@@ -1,0 +1,3 @@
+#! /bin/bash
+rake code_coverage 2>/dev/null
+echo "( to view detailed coverage: firefox coverage/index.html & )"

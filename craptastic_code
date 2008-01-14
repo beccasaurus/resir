@@ -1,0 +1,14 @@
+#! /bin/bash
+#
+# helper script to show possible candidates for refactoring
+#
+
+echo -e "\n[ Lines of Code ]\n"
+find . -iname '*.rb' -exec wc -l {} \; | sort -nr | grep -v 'setup.rb' | grep -v 'hoe.rb' | grep -v 'requirements.rb'
+
+echo -e "\n[ FLOG ]\n"
+find . -iname '*.rb' | xargs flog 2>/dev/null | grep '^[^ ]' | grep -v 'it#should'
+
+echo -e "\n[ saikuro ]\n"
+saikuro -c -i . -w 5 -e 10 -o tmp/
+echo -e "( to view cyclomatic complexity: firefox tmp/index_cyclo.html & )"

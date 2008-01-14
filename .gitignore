@@ -4,3 +4,6 @@ website/*.html
 website/**/*.html
 pkg/*
 tmp/*
+coverage/*
+lib/*.html
+lib/**/*.html

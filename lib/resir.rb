@@ -5,7 +5,8 @@ require 'rubygems'
 require 'logger'
 require 'rack'
 
-require 'resir/version'
+# resir files
+require 'resir/version'     # version number ( smallest revision gets automatically updated )
 require 'resir/extensions'  # pre-requisite to most of our code
 require 'resir/resir'       # required by Resir::Site
 require 'resir/site'        # require by config (and Resir, but not on require)
