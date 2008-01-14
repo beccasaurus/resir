@@ -107,8 +107,11 @@ class Resir::Site
     "#{template_rootpath}/#{name}"
   end
 
-  def safe_name
-    self.name.gsub /[^a-zA-Z_]/, ''
+  def safe_name       # safe for use in url
+    self.name.gsub /[^a-zA-Z_.-]/, ''
+  end
+  def safe_host_name  # safe for use as a host name (safe_name with _ => -)
+    self.safe_name.gsub '_', '-'
   end
 
 end

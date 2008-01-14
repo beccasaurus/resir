@@ -20,11 +20,11 @@ describe Resir::Server do
   #       response = @site.call Rack::MockRequest::env_for('/some/path')
   #       response = @request.get '/some/path'
 
-  it 'should make the default paths based on the safe name of a site' do 
+  it 'should make the default paths based on the safe_name (and safe_host_name) of a site' do 
     site = Resir::Site.new 'examples/ambrose/starmonkey'
     site.name = '*! crazy _ star _ monkey !*'
     site.safe_name.should == 'crazy_star_monkey'
-    Resir::Server::default_paths(site).should == ['http://crazy_star_monkey/','/crazy_star_monkey']
+    Resir::Server::default_paths(site).should == ['http://crazy-star-monkey/','/crazy_star_monkey']
   end
 
   it 'should find a single site when passed its directory' do
@@ -50,7 +50,7 @@ describe Resir::Server do
     server.urls.length.should == 6
     server.urls.keys.should include('http://starmonkey/')
     server.urls.keys.should include('/starmonkey')
-    server.urls.keys.should include('http://pet_ham/')
+    server.urls.keys.should include('http://pet-ham/')
     server.urls.keys.should include('/pet_ham')
   end
 
@@ -62,7 +62,7 @@ describe Resir::Server do
     server.urls.length.should == 6
     server.urls.keys.should include('http://starmonkey/')
     server.urls.keys.should include('/starmonkey')
-    server.urls.keys.should include('http://pet_ham/')
+    server.urls.keys.should include('http://pet-ham/')
     server.urls.keys.should include('/pet_ham')
   end
 
@@ -74,7 +74,7 @@ describe Resir::Server do
     server.urls.length.should == 6
     server.urls.keys.should include('http://starmonkey/')
     server.urls.keys.should include('/starmonkey')
-    server.urls.keys.should include('http://pet_ham/')
+    server.urls.keys.should include('http://pet-ham/')
     server.urls.keys.should include('/pet_ham')
   end
 
@@ -144,8 +144,38 @@ describe Resir::Server do
     response.body.should include(%{<a href="/starmonkey">starmonkey</a>})
   end
 
-  it 'should let the site change its name in .siterc'
+# self.name = 'I _ Changed _ My _ Name'" > examples/multi_test/change_my_name/.siterc 
+  it 'should let the site change its name in .siterc' do
+    server = Resir::Server.new 'examples'
+    request = Rack::MockRequest.new server
+    server.sites.select{|s| s.name == 'I _ Changed _ My _ Name' }.length.should == 1
+    server.sites.select{|s| s.safe_name == 'I_Changed_My_Name' }.length.should == 1
 
-  it 'should let the site change its urls in .siterc'
+    response = request.get '/change_my_name'
+    response.status.should == 404
+    response = request.get 'http://change-my-name/'
+    response.status.should == 200
+    response.body.should include(
+      %{<a href="/I_Changed_My_Name">I _ Changed}) # this should be the index page, NOT change ...
+
+    response = request.get '/I_Changed_My_Name'
+    response.status.should == 200
+    response = request.get 'http://I-Changed-My-Name/'
+    response.status.should == 200
+  end
+
+# self.urls = ['/my-cool-path','http://my-cool-host/']" > examples/multi_test/change_my_url/.siterc 
+  it 'should let the site change its urls in .siterc' do
+    server = Resir::Server.new 'examples'
+    request = Rack::MockRequest.new server
+    server.urls.keys.should_not include('/change_my_url')
+    server.urls.keys.should include('/my-cool-path')
+
+    response = request.get '/change_my_url'
+    response.status.should == 404
+
+    response = request.get '/my-cool-path'
+    response.status.should == 200
+  end
 
 end
