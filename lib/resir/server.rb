@@ -7,7 +7,7 @@ class Resir::Server
   end
   
   def initialize *dirs
-    @sites = Resir::get_sites dirs
+    @sites = Resir::get_sites *dirs
     log.info { "server initialized with #{dirs.length} dirs [#{@sites.length} sites found]" }
 
     @urls = {}
@@ -17,6 +17,12 @@ class Resir::Server
         @urls.merge! ({ path => site })
       end
     end
+
+    @call_handler = Rack::URLMap.new @urls
+  end
+
+  def call *args
+    @call_handler.call *args
   end
 
 end
