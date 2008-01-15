@@ -85,26 +85,11 @@ describe Resir do
     Resir::render("hi there", binding, my_filter, my_other_filter ).should == '[ >>>>hi there<<<< ]'
   end
 
-  # make a few more example dirs and confirm sites all load (use 1 top lvl and 2/3 subdirs)
-  it "should return an Array of Resir::Site's from *directories"
-
   it "should return an Array of Resir::Site's from a directory" do
     ambrose = 'examples/ambrose'
     File.directory?(ambrose).should == true
     sites = Resir::sites(ambrose)
     dirs = sites.collect{|s| s.root_directory}
-    #     examples/ambrose/
-    #       |-- starmonkey
-    #     |   |-- .siterc
-    #     |   `-- public
-    #     |-- the_elf
-    #     |   `-- pet_ham
-    #     |       |-- .siterc
-    #     |       `-- public
-    #     `-- trady_blix
-    #         |-- .siterc
-    #             `-- pardon_our_mess_folks
-    #                     `-- shuffle_right_past_the_little_fellow
     sites.should be_a_kind_of(Array)
     sites.length.should == 3
     dirs.should include("#{ambrose}/starmonkey")
@@ -115,7 +100,5 @@ describe Resir do
     sites.find {|s| s.root_directory == "#{ambrose}/the_elf/pet_ham" }.public_directory.should == 'public'
     sites.find {|s| s.root_directory == "#{ambrose}/trady_blix" }.public_directory.should == 'pardon_our_mess_folks/shuffle_right_past_the_little_fellow'
   end
-
-  it "should resirize an Array of Resir::Sites"
 
 end

@@ -10,5 +10,6 @@ require 'resir/version'     # version number ( smallest revision gets automatica
 require 'resir/extensions'  # pre-requisite to most of our code
 require 'resir/resir'       # required by Resir::Site
 require 'resir/site'        # require by config (and Resir, but not on require)
+require 'resir/responder' 
 load    'resir/config.rb'   # requires Resir and Resir::Site (loads because Resir can re-load)
 require 'resir/server'      # utilizes the other classes, none of them require it

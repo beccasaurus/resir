@@ -2,6 +2,13 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe Resir::Site do
 
+  it "should have access to the server holding it, if run by server" do
+    server = Resir::Server.new 'examples'
+    server.sites.length.should > 0
+    server.sites.first.server.should == server
+    server.sites.first.server.should === server
+  end
+
   it "should have a .safe_name and .safe_host_name for using in paths and urls" do
     site = Resir::Site.new 'examples/ambrose/starmonkey'
     site.name = 'Some 5 Wild! .and - Crazy? _ Name:!'

@@ -9,6 +9,7 @@ class Resir::Server
   def initialize *dirs
 
     @sites = Resir::get_sites *dirs
+    @sites.each { |site| site.server = self }
     log.info { "server initialized with #{dirs.length} dirs [#{@sites.length} sites found]" }
 
     # enable / setup site_index ( you can set to nil to disable )

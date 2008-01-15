@@ -1,48 +1,26 @@
 class Resir::Site
   include IndifferentVariableHash
 
+  # kill this:
   attr_accessor :path_prefix # set from script running if we want to remove a prefix from path
+
+  attr_accessor :server
 
   def call env
 
-    @env = env
-    @request = Rack::Request.new @env
-    @response = Rack::Response.new
-
-    @path = (@env.REQUEST_URI) ? @env.REQUEST_URI.to_s : @env.PATH_INFO.to_s
-    @path = @path.sub(self.path_prefix,'') unless self.path_prefix.nil? or self.path_prefix.empty?
-    @path = @path.sub(/^\//,'').sub(/\/$/,'')
-
-    @template = (@path.empty?) ? nil : get_template(@path)
-
-    # go thru the urls that start with '/' and see if our current path matches one
-    # in which case we should remove that prefix and try again
-    if @template.nil? and not @path.nil? and not @path.empty?
-      self.urls ||= Resir::Server::default_paths( self )
-      self.urls.select{ |url| url[/^\//] }.each do |url|
-        url = url.sub /^\//,''
-        if @path.index(url) == 0
-          @path = @path.sub url, ''
-          @template = get_template @path
-          break
-        end
-      end
+    if env.has_key?'REQUEST_URI'
+      env.PATH_INFO = env.REQUEST_URI
+    elsif env.has_key?'PATH_INFO'
+      env.REQUEST_URI = env.PATH_INFO
     end
 
-    # check for directory_index
-    if @template.nil? and @path.empty?
-      Resir.directory_index.find { |name| @template = get_template name }
-    end
+    require 'resir/responder'
 
-    unless @template
-      @response.status = 404
-      @response.body = "File Not Found: #{@path}"
-    else
-      @response.body = render_page @template
-    end
+    responder          = Resir::Site::Responder.new self
+    responder.request  = Rack::Request.new @env
+    responder.response = Rack::Response.new
 
-    # @response['Content-Type'] = 'text/html'
-    @response.finish
+    responder.call env
   end
 
   def initialize root_dir
@@ -77,7 +55,7 @@ class Resir::Site
     eval File.read(siterc) unless not File.file?siterc # because load can't get to our instance!
   end
 
-  def render_page name
+  def render_page name, binding
     # define some neato methods ...
     #
     # need to clean up ... and needs to take the template root into account??
@@ -93,15 +71,15 @@ class Resir::Site
 
     @site = self
     @layout = 'layout' # make into a Resir/Site variable ... override at global or site level
-    @content = render_template name
+    @content = render_template name, binding
     layout_template = get_template(@layout) if @layout
-    @content = render_template(layout_template) if @layout and layout_template 
+    @content = render_template(layout_template, binding) if @layout and layout_template 
     @content
   end
 
-  def render_template name
+  def render_template name, binding
     name = get_template(name) unless File.file?(File.join(template_rootpath, name))
-    Resir::render_file template_realpath(name), binding()
+    Resir::render_file template_realpath(name), binding
   end
   alias render render_template
 
