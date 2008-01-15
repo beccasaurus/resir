@@ -1,0 +1,2 @@
+require 'resir/filters/erb'
+require 'resir/rails'

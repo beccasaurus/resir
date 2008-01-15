@@ -48,4 +48,9 @@ describe 'filters' do
     get.should == "from helper: <script type=\"text/javascript\" src=\"/js/testing123.js\"></script>"
   end
 
+  it "should support rails ActionView::Helpers" do
+    setup 'rails_helper'
+    get.should == "hi.  <input id=\"name\" name=\"name\" type=\"text\" value=\"john\" />"
+  end
+
 end
