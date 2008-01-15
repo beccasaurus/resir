@@ -1,18 +1,19 @@
 class Resir::Site::Responder
 
-  attr_accessor :site, :request, :response # try to keep it simple for now ... can get EVERYTHING from these (that i can think of)
+  attr_accessor :site, :request, :response
 
   def initialize site
     @site = site
   end
 
   def call env
-
     # need to refactor like nobody's business!
+    
     @env = env
 
     @path = env.PATH_INFO
-    @path = @path.sub(self.site.path_prefix,'') unless self.site.path_prefix.nil? or self.site.path_prefix.empty?
+    @path = @path.sub(self.site.path_prefix,'') unless self.site.path_prefix.nil? or 
+      self.site.path_prefix.empty?
     @path = @path.sub(/^\//,'').sub(/\/$/,'')
 
     @template = (@path.empty?) ? nil : @site.get_template(@path)
