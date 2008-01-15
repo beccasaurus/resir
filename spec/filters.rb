@@ -36,6 +36,11 @@ describe 'filters' do
     get.should == "BEGIN\n<h1>welcome to puppies!</h1><p><strong>lander</strong> is <em>the</em> <code>coolest</code></p>\nEND"
   end
 
+  it 'should support them all, mixed and matched and whatnot (and use Inflector)' do
+    setup 'all'
+    get('/all/styles').should == "body #home {\n  color: blue; }"
+  end
+
   it 'should support an arbitrary require and include from .siterc' do
     # right now, only works if the required file has the methods defined 
     # at the TOPLEVEL ... hrm ... will work on this later
