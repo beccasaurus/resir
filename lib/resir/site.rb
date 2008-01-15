@@ -55,7 +55,8 @@ class Resir::Site
     eval File.read(siterc) unless not File.file?siterc # because load can't get to our instance!
   end
 
-  def render_page name, binding
+  def render_page name, responder
+    puts "\n\n#{'-'*50}\n\n[ site#renderpage ] @follow_me = #{@follow_me}\n\n#{'-'*50}\n\n"
     # define some neato methods ...
     #
     # need to clean up ... and needs to take the template root into account??
@@ -69,19 +70,27 @@ class Resir::Site
       end
     end
 
-    @site = self
+    @site = self.site
+
     @layout = 'layout' # make into a Resir/Site variable ... override at global or site level
-    @content = render_template name, binding
+    @content = render_template( name, responder )
     layout_template = get_template(@layout) if @layout
-    @content = render_template(layout_template, binding) if @layout and layout_template 
+    @content = render_template(layout_template, responder) if @layout and layout_template 
     @content
   end
 
-  def render_template name, binding
+  def render_template name, responder
+    puts "\n\n#{'-'*50}\n\n[ site#render_template ] @follow_me = #{@follow_me}\n\n#{'-'*50}\n\n"
     name = get_template(name) unless File.file?(File.join(template_rootpath, name))
-    Resir::render_file template_realpath(name), binding
+    responder.instance_eval { 
+      puts "\n\n#{'-'*50}\n\n[ site#render_template responder.instance_eval ] @follow_me = #{@follow_me}\n\n#{'-'*50}\n\n"
+      Resir::render_file( self.site.template_realpath(name), binding() ) 
+    }
   end
-  alias render render_template
+  # alias render render_template
+  def render *args
+    render_template *args
+  end
 
   def get_template name
     return nil if name.nil? or name.empty?

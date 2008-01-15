@@ -8,6 +8,10 @@ class Resir::Site::Responder
 
   def call env
 
+    # test instance variable for getting binding working
+    @follow_me = "Hello, I am Here!  You've still got me!"
+    puts "\n\n#{'-'*50}\n\n[ FIRST ] @follow_me = #{@follow_me}\n\n#{'-'*50}\n\n"
+
     # need to refactor like nobody's business!
     @env = env
 
@@ -40,7 +44,8 @@ class Resir::Site::Responder
       @response.status = 404
       @response.body = "File Not Found: #{@path}"
     else
-      @response.body = self.site.render_page( @template, binding() )
+      puts "\n\n#{'-'*50}\n\n[ responder, before site#renderpage ] @follow_me = #{@follow_me}\n\n#{'-'*50}\n\n"
+      @response.body = @site.render_page( @template, self )
     end
 
     @response.finish

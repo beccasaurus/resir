@@ -71,6 +71,9 @@ class Resir
     rendered.strip
   end
   def self.render_with_extensions string, binding, *extensions
+    puts "\n\n#{'-'*50}\n\n[ Resir::render_with_extensions ] @follow_me = #{@follow_me}\n\n#{'-'*50}\n\n"
+    puts "\n\n#{'-'*50}\n\n[ Resir::render_with_extensions EVAL TEST IN BINDING ] @follow_me = #{eval('@follow_me',binding)}\n\n#{'-'*50}\n\n"
+    # ^ OK in ***binding***
     rendered = string
     extensions.each do |ext|
       rendered = Resir.extensions[ext][rendered,binding] if Resir.extensions.include?ext
@@ -78,6 +81,7 @@ class Resir
     rendered.strip
   end
   def self.render_file filename, binding=binding()
+    puts "\n\n#{'-'*50}\n\n[ Resir::render_file ] @follow_me = #{@follow_me}\n\n#{'-'*50}\n\n"
     raise "File not found to render: #{filename}" unless File.file?filename
     render_with_extensions File.read(filename).strip, binding, *get_extensions(filename)
   end
