@@ -5,7 +5,7 @@ class Resir
     MINOR = 4
     TINY  = 0
     
-    SCM = 63
+    SCM = 65
     
     # ^ SCM set via script : `git log --pretty=oneline | wc -l`.strip
 
