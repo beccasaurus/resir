@@ -1,2 +1,5 @@
 %p hello from haml
 %p== hello there #{snippet :test}. #{request.env.PATH_INFO}
+-# confirming that Haml Helpers work ...
+= list_of([['hello'], ['yall']]) do |i|
+  = i[0]

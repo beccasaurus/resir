@@ -22,7 +22,7 @@ describe 'filters' do
 
   it 'should support haml' do
      setup 'haml'
-     get.should == "<p>hello from haml</p>\n<p>hello there test. /</p>"
+     get.should == "<p>hello from haml</p>\n<p>hello there test. /</p>\n<li>hello</li>\n<li>yall</li>"
   end
 
   it 'should support markaby' do
