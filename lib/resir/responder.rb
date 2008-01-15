@@ -50,14 +50,18 @@ class Resir::Site::Responder
     #
     # need to clean up ... and needs to take the template root into account??
     #
-    root = @site.root_directory + '/'
-    Dir["#{root}*"].collect { |o| o.sub(root,'') }.select { |o| not o.include?'.' }.
-    select{|o| File.directory?"#{root}#{o}" }.each do |directory| 
-      metaclass.send(:define_method, directory) { |name| render "#{directory}/#{name}" }
-      inflected = Inflector.singularize directory
-      inflected = Inflector.pluralize directory if inflected == directory
-      if inflected != directory
-        metaclass.send(:define_method, inflected) { |name| render "#{directory}/#{name}" }
+    unless @site.auto_partials = false
+      root = @site.root_directory + '/'
+      Dir["#{root}*"].collect { |o| o.sub(root,'') }.select { |o| not o.include?'.' }.
+      select{|o| File.directory?"#{root}#{o}" }.each do |directory| 
+        unless @site.no_partials and @site.no_partials.include?directory
+          metaclass.send(:define_method, directory) { |name| render "#{directory}/#{name}" }
+          inflected = Inflector.singularize directory
+          inflected = Inflector.pluralize directory if inflected == directory
+          if inflected != directory
+            metaclass.send(:define_method, inflected) { |name| render "#{directory}/#{name}" }
+          end
+        end
       end
     end
 
