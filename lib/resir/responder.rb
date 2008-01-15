@@ -54,8 +54,10 @@ class Resir::Site::Responder
     Dir["#{root}*"].collect { |o| o.sub(root,'') }.select { |o| not o.include?'.' }.
     select{|o| File.directory?"#{root}#{o}" }.each do |directory| 
       metaclass.send(:define_method, directory) { |name| render "#{directory}/#{name}" }
-      if directory[/s$/]
-        metaclass.send(:define_method, directory.sub(/s$/,'')) { |name| render "#{directory}/#{name}" }
+      inflected = Inflector.singularize directory
+      inflected = Inflector.pluralize directory if inflected == directory
+      if inflected != directory
+        metaclass.send(:define_method, inflected) { |name| render "#{directory}/#{name}" }
       end
     end
 

@@ -26,4 +26,10 @@ describe 'filters' do
      @request.get('/markaby').body.should == "<p>markaby says hello</p><strong>example.org</strong><p>!pickaxe!</p>"
   end
 
+  # used partial thingers, Inflector, haml, markdown, markaby, erb, directory_index, and layout
+  it 'should support them all, mixed and matched and whatnot (and use Inflector)' do
+    setup 'all'
+    @request.get('/all').body.should == "BEGIN\n<h1>welcome to puppies!</h1><p><strong>lander</strong> is <em>the</em> <code>coolest</code></p>\nEND"
+  end
+
 end
