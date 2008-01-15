@@ -59,7 +59,7 @@ class Resir::Site::Responder
       end
     end
 
-    @responder      = self
+    @responder      = self     # required by markaby (so far as i can tell)
     @layout         = 'layout' # make into a Resir/Site variable ... override at global or site level
     @content        = render_template name
     layout_template = @site.get_template(@layout) if @layout

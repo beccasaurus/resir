@@ -1,0 +1,3 @@
+p 'markaby says hello'
+strong { request.env.SERVER_NAME }
+p "#{responder.book :pickaxe}"
