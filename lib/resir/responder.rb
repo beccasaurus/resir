@@ -8,8 +8,6 @@ class Resir::Site::Responder
 
   def call env
     # need to refactor like nobody's business!
-    
-    @env = env
 
     @path = env.PATH_INFO
     @path = @path.sub(self.site.path_prefix,'') unless self.site.path_prefix.nil? or 
@@ -41,13 +39,13 @@ class Resir::Site::Responder
       @response.status = 404
       @response.body = "File Not Found: #{@path}"
     else
-      @response.body = render_page( @template, self )
+      @response.body = render_page @template
     end
 
     @response.finish
   end
 
-  def render_page name, responder
+  def render_page name
     # define some neato methods ...
     #
     # need to clean up ... and needs to take the template root into account??
@@ -61,10 +59,11 @@ class Resir::Site::Responder
       end
     end
 
-    @layout = 'layout' # make into a Resir/Site variable ... override at global or site level
-    @content = render_template name
+    @responder      = self
+    @layout         = 'layout' # make into a Resir/Site variable ... override at global or site level
+    @content        = render_template name
     layout_template = @site.get_template(@layout) if @layout
-    @content = render_template layout_template if @layout and layout_template 
+    @content        = render_template layout_template if @layout and layout_template 
     @content
   end
 

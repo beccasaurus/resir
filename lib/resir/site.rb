@@ -18,7 +18,7 @@ class Resir::Site
     require 'resir/responder'
 
     responder          = Resir::Site::Responder.new self
-    responder.request  = Rack::Request.new @env
+    responder.request  = Rack::Request.new env
     responder.response = Rack::Response.new
 
     response  = responder.call env

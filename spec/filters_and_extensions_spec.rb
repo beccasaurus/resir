@@ -19,7 +19,7 @@ end
 describe 'default_filters_and_extensions' do
   
   before do
-    load 'lib/resir/default_filters_and_extensions.rb'
+    load 'lib/resir/filters.rb'
   end
 
   it 'should support erb' do

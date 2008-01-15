@@ -2,6 +2,15 @@
 #
 # when / if this grows to be too long, extract to multiple files
 
+def lib_available? lib
+  begin
+    require lib
+    true
+  rescue LoadError
+    false
+  end
+end
+
 class Module
   # for, you know ... aliasing methods!  ( borrowed from active_support )
   def alias_method_chain(target, feature)
