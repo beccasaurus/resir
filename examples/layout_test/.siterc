@@ -1,2 +1,1 @@
 Resir.filters.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
-Resir.extensions.erb = lambda { |text,b| Resir.filters.erb[text,b] }

@@ -6,8 +6,10 @@ README.txt
 Rakefile
 TODO
 bin/resir
+code_coverage
 config/hoe.rb
 config/requirements.rb
+craptastic_code
 deploy/resir.cgi
 deploy/scripts/ubuntu_linux/install_resir
 examples/ambrose/starmonkey/.siterc
@@ -46,10 +48,12 @@ lib/resir/config.rb
 lib/resir/default_filters_and_extensions.rb
 lib/resir/extensions.rb
 lib/resir/resir.rb
+lib/resir/responder.rb
 lib/resir/server.rb
 lib/resir/site.rb
 lib/resir/version.rb
 log/debug.log
+make_gem
 run_specs
 run_stories
 script/destroy
@@ -59,10 +63,12 @@ setup.rb
 spec/filters_and_extensions_spec.rb
 spec/rack_spec.rb
 spec/resir_spec.rb
+spec/responder_spec.rb
 spec/server_spec.rb
 spec/site_spec.rb
 spec/spec.opts
 spec/spec_helper.rb
+spec/spec_rcov.opts
 stories/simple_stories_from_specs
 stories/simple_story
 stories/simple_story.rb

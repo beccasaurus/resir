@@ -1,47 +1,14 @@
 class Resir
   meta_include IndifferentVariableHash
 
-  # mini-class for handling Resir.filter_and_extension 
-  # or Resir.extension_and_filter
-  #
-  # move out of here or clean up somehow!
-  class FilterAndExtension
-    def method_missing name, *a
-      if name.to_s[/=$/]
-        name = name.to_s.sub(/=$/, '')
-        Resir.filters[name] = a.first
-        Resir.extensions[name] = lambda { |text,binding| Resir.filters[name][text,binding] }
-      else
-        super
-      end
-    end
-  end
-  class << self
-    attr_accessor :filter_and_extension
-    alias extension_and_filter filter_and_extension ; alias :extension_and_filter= :filter_and_extension=
-  end
-  def self.filter;        self.filters;       end
-  def self.extension;     self.extensions;    end
-  def self.filter=(v);    self.filters v;     end
-  def self.extension=(v); self.extensions v;  end
-  # END FileterAndExtension
-
-  def self.init_logger # setup a 'log' method we can call from anywhere to access logger
-    eval( %{
-      def log
-        Resir::logger
-      end
-    }, TOPLEVEL_BINDING )
-    log.level = Logger::DEBUG # change from your config files or from ... i dunno.  we'll see.
-    log.datetime_format = "" # "%H:%M:%S" # keep it small and readable, for right now
-    log.info { "Resir::logger initialized" }
+  def self.init_logger
+    eval( 'def log; Resir::logger; end', TOPLEVEL_BINDING )
   end
 
   def self.initialize
     @variables ||= {}
     load 'resir/config.rb'
     init_logger unless defined?log
-    self.filter_and_extension = FilterAndExtension.new
     load File.expand_path(Resir.user_rc_file) if File.file?File.expand_path(Resir.user_rc_file)
   end
 
@@ -57,8 +24,7 @@ class Resir
   end
 
   def self.get_extensions filename
-    # trick to make sure we get some extensions, if missing them ... try to move this latter ...
-    self.initialize if Resir.extensions.length == 0
+    self.initialize if Resir.filters == 0
     filename = File.basename filename
     extensions = filename.split('.')
     without_extensions = extensions.shift
@@ -67,19 +33,14 @@ class Resir
 
   def self.render_with_filters string, binding, *filters
     rendered = string
-    filters.each { |callable| rendered = callable[rendered,binding] }
+    filters = filters.collect { |name| Resir.filters[name] } unless filters.first.respond_to?:call
+    filters.select{ |x| not x.nil? }.each { |callable| rendered = callable[rendered,binding] }
     rendered.strip
   end
-  def self.render_with_extensions string, binding, *extensions
-    rendered = string
-    extensions.each do |ext|
-      rendered = Resir.extensions[ext][rendered,binding] if Resir.extensions.include?ext
-    end
-    rendered.strip
-  end
+
   def self.render_file filename, binding=binding()
     raise "File not found to render: #{filename}" unless File.file?filename
-    render_with_extensions File.read(filename).strip, binding, *get_extensions(filename)
+    render_with_filters File.read(filename).strip, binding, *get_extensions(filename)
   end
 
   # wow, messy!  but it gets the job done!
@@ -102,7 +63,7 @@ class Resir
           render_with_filters string_to_render, binding, *args
 
         elsif args.first.is_a?String                # render 'str', 'erb' [, 'mkd' ]
-          render_with_extensions string_to_render, binding, *args
+          render_with_filters string_to_render, binding, *args
 
         else; raise "don't know how to render: #{args.inspect}"; end
 

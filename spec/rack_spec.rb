@@ -27,18 +27,12 @@ describe Resir::Site, 'Rack Adapter' do
   # move to filters and extensions spec ?
   it 'should render ERB if filter and extension defined' do
     Resir.filters.delete('erb')
-    Resir.extensions.delete('erb')
     response = @request.get 'home'
     response.status.should == 200
     response.body.should == %{<%= "hello there!" %>}
 
     require 'erb'
     Resir.filters.erb = lambda { |text,binding| ERB.new(text).result(binding) }
-    response = @request.get 'home'
-    response.status.should == 200
-    response.body.should == %{<%= "hello there!" %>}
-
-    Resir.extensions.erb = lambda { |text,binding| Resir.filters.erb.call text,binding }
     response = @request.get 'home'
     response.status.should == 200
     response.body.should == %{hello there!}

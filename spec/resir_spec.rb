@@ -10,19 +10,6 @@ describe Resir do
     Resir::get_extensions('haml-test.mkd.html.haml').should == %w(haml html mkd)
   end
 
-  it 'should have access to filter(s) and extension(s) (without plural)' do
-    Resir.filters.my_test = lambda { |t,b| "hello world" }
-    Resir.filters.keys.should include('my_test')
-    Resir.filter.keys.should include('my_test')
-    Resir.filter.another_test = lambda { |t,b| "hi there" }
-    Resir.filter.keys.should include('another_test')
-    Resir.filters.keys.should include('another_test')
-
-    Resir.extensions.my_test = lambda { |t,b| "hello world" }
-    Resir.extensions.keys.should include('my_test')
-    Resir.extension.keys.should include('my_test')
-  end
-
   it "should have an initialized variable Hash" do
     Resir::variables.should be_a_kind_of(Hash)
     Resir::vars.should be_a_kind_of(Hash)
@@ -50,21 +37,13 @@ describe Resir do
     Resir.public_directory.should == 'public'
   end
 
-  it "should allow me to render a full path to a filename" do
-    Resir.filter_and_extension.demo = lambda { |text,b| text.gsub('spam','chunky') }
-    Resir.filter_and_extension.test = lambda { |text,b| text.gsub('eggs','bacon') }
-    # 'the spam and eggs are yummy'
-    file = File.dirname(__FILE__) + '/../examples/misc/render-me.test.demo'
-    Resir::render(file,binding).should == 'the chunky and bacon are yummy'
-  end
-
   it "should allow me to render a template string String (including arguments of extension names)" do
-    Resir.filter_and_extension.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
+    Resir.filters.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
     Resir::render('hello <%= "there" %>', binding, 'erb').should == 'hello there'
   end
   
   it "should allow me to render a template string String (including an array of extension names)" do
-    Resir.filter_and_extension.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
+    Resir.filters.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
     Resir::render('hello <%= "there" %>', binding, ['erb']).should == 'hello there'
   end
 
