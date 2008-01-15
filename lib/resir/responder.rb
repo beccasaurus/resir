@@ -8,10 +8,6 @@ class Resir::Site::Responder
 
   def call env
 
-    # test instance variable for getting binding working
-    @follow_me = "Hello, I am Here!  You've still got me!"
-    puts "\n\n#{'-'*50}\n\n[ FIRST ] @follow_me = #{@follow_me}\n\n#{'-'*50}\n\n"
-
     # need to refactor like nobody's business!
     @env = env
 
@@ -19,7 +15,7 @@ class Resir::Site::Responder
     @path = @path.sub(self.site.path_prefix,'') unless self.site.path_prefix.nil? or self.site.path_prefix.empty?
     @path = @path.sub(/^\//,'').sub(/\/$/,'')
 
-    @template = (@path.empty?) ? nil : self.site.get_template(@path)
+    @template = (@path.empty?) ? nil : @site.get_template(@path)
 
     # go thru the urls that start with '/' and see if our current path matches one
     # in which case we should remove that prefix and try again
@@ -29,7 +25,7 @@ class Resir::Site::Responder
         url = url.sub /^\//,''
         if @path.index(url) == 0
           @path = @path.sub url, ''
-          @template = self.site.get_template @path
+          @template = @site.get_template @path
           break
         end
       end
@@ -37,18 +33,44 @@ class Resir::Site::Responder
 
     # check for directory_index
     if @template.nil? and @path.empty?
-      Resir.directory_index.find { |name| @template = self.site.get_template name }
+      Resir.directory_index.find { |name| @template = @site.get_template name }
     end
 
     unless @template
       @response.status = 404
       @response.body = "File Not Found: #{@path}"
     else
-      puts "\n\n#{'-'*50}\n\n[ responder, before site#renderpage ] @follow_me = #{@follow_me}\n\n#{'-'*50}\n\n"
-      @response.body = @site.render_page( @template, self )
+      @response.body = render_page( @template, self )
     end
 
     @response.finish
   end
+
+  def render_page name, responder
+    # define some neato methods ...
+    #
+    # need to clean up ... and needs to take the template root into account??
+    #
+    root = @site.root_directory + '/'
+    Dir["#{root}*"].collect { |o| o.sub(root,'') }.select { |o| not o.include?'.' }.
+    select{|o| File.directory?"#{root}#{o}" }.each do |directory| 
+      metaclass.send(:define_method, directory) { |name| render "#{directory}/#{name}" }
+      if directory[/s$/]
+        metaclass.send(:define_method, directory.sub(/s$/,'')) { |name| render "#{directory}/#{name}" }
+      end
+    end
+
+    @layout = 'layout' # make into a Resir/Site variable ... override at global or site level
+    @content = render_template name
+    layout_template = @site.get_template(@layout) if @layout
+    @content = render_template layout_template if @layout and layout_template 
+    @content
+  end
+
+  def render_template name
+    name = @site.get_template(name) unless File.file?(File.join(@site.template_rootpath, name))
+    Resir::render_file( @site.template_realpath(name), binding() ) 
+  end
+  alias render render_template
 
 end
