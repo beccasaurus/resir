@@ -28,30 +28,13 @@ class Object
   end
 end
 
-# variables used by methods ... 
-# should probably be on a class or module ...
-class Helpers
-  # basically, if the method coming in 
-  # is like Helpers::image_dir= then 
-  # let's go ahead and make a Helpers::image_dir
-  # variable for you, and set it!
-  def self.method_missing name, *a
-    if name.to_s[/=$/]
-      name = name.to_s.sub '=',''
-      meta_eval { attr_accessor name }
-      instance_variable_set "@#{name}", a.first
-    else
-      super name, *a
-    end
-  end
-end
-
 # HELPER VARIABLES
 
-Helpers::js_dir    = '/js/'
-Helpers::css_dir   = '/css/'
-Helpers::image_dir = '/img/'
-Helpers::flash_dir = '/flash/'
+Resir::helper           ||=  {}
+Resir::helper.js_dir    ||=  '/js/'
+Resir::helper.css_dir   ||=  '/css/'
+Resir::helper.image_dir ||=  '/img/'
+Resir::helper.flash_dir ||=  '/flash/'
 
 # HELPER METHODS
 
@@ -108,10 +91,10 @@ end
 #   # => '<img src="/img/my_image.png" />'
 #
 # to change the image directory prefix, 
-# change Helpers::image_dir
+# change Resir::helper.image_dir
 #
 def img file, options = {}
-  file = file[/^http/] ? file : Helpers::image_dir + file
+  file = file[/^http/] ? file : Resir::helper.image_dir + file
   options.src = file; options[:self_closing] = true
   tag 'img', options
 end
@@ -142,11 +125,11 @@ end
 #   stylesheet 'my_styles'  # => <link href="css/my_styles.css" ...
 #
 # to change the stylesheets directory prefix,
-# change Helpers::css_dir
+# change Resir::helper.css_dir
 #
 def stylesheet file
   file = "#{file}.css" unless file.include?'.css'
-  file = file[/^http/] ? file : Helpers::css_dir + file
+  file = file[/^http/] ? file : Resir::helper.css_dir + file
   %{ <link href="#{file}" rel="stylesheet" type="text/css" /> }.strip
 end
 
@@ -165,7 +148,7 @@ end
 
 def javascript file
   file = "#{file}.js" unless file.include?'.js'
-  file = file[/^http/] ? file : Helpers::js_dir + file
+  file = file[/^http/] ? file : Resir::helper.js_dir + file
   %{ <script type="text/javascript" src="#{file}"></script> }.strip
 end
 
@@ -179,7 +162,7 @@ end
 #   # => <object ... src="/flash/header.swf" ...
 #
 # to change the flash directory prefix,
-# change Helpers::flash_dir
+# change Resir::helper.flash_dir
 #
 # TODO add custom options to support FlashVars and 
 # enabling or disabling transparency
@@ -192,11 +175,11 @@ def swf file, options = { :height => '100', :width => '100' }
   id_and_name = file.gsub('/','').gsub(' ','_')
   %{ <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="#{options[:width]}" height="#{options[:height]}" id="#{id_and_name}" name="#{id_and_name}" align="middle">
         <param name="allowScriptAccess" value="sameDomain" />
-        <param name="movie" value="#{Helpers::flash_dir}#{file}.swf" />
+        <param name="movie" value="#{Resir::helper.flash_dir}#{file}.swf" />
         <param name="quality" value="high" />
         <param name="bgcolor" value="#ffffff" />
         <param name="FlashVars" value="" />
-  <embed src="#{Helpers::flash_dir}#{file}.swf" quality="high" bgcolor="#ffffff" width="#{options[:width]}" height="#{options[:height]}" name="#{id_and_name}" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
+  <embed src="#{Resir::helper.flash_dir}#{file}.swf" quality="high" bgcolor="#ffffff" width="#{options[:width]}" height="#{options[:height]}" name="#{id_and_name}" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
 </object> }.strip
 end
 
