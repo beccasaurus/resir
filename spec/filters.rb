@@ -7,29 +7,45 @@ describe 'filters' do
   end
 
   def setup site
+     @site = site
      @server = Resir::Server.new "examples/for_filters/#{site}"
      @request = Rack::MockRequest.new @server
+  end
+  def get path="/#{@site}"
+    @request.get(path).body
   end
 
   it 'should support erb' do
      setup 'erb'
-     @request.get('/erb').body.should == 'hello. misc stuff. /'
+     get.should == 'hello. misc stuff. /'
   end
 
   it 'should support haml' do
      setup 'haml'
-     @request.get('/haml').body.should == "<p>hello from haml</p>\n<p>hello there test. /</p>"
+     get.should == "<p>hello from haml</p>\n<p>hello there test. /</p>"
   end
 
   it 'should support markaby' do
      setup 'markaby'
-     @request.get('/markaby').body.should == "<p>markaby says hello</p><strong>example.org</strong><p>!pickaxe!</p>"
+     get.should == "<p>markaby says hello</p><strong>example.org</strong><p>!pickaxe!</p>"
   end
 
   # used partial thingers, Inflector, haml, markdown, markaby, erb, directory_index, and layout
   it 'should support them all, mixed and matched and whatnot (and use Inflector)' do
     setup 'all'
-    @request.get('/all').body.should == "BEGIN\n<h1>welcome to puppies!</h1><p><strong>lander</strong> is <em>the</em> <code>coolest</code></p>\nEND"
+    get.should == "BEGIN\n<h1>welcome to puppies!</h1><p><strong>lander</strong> is <em>the</em> <code>coolest</code></p>\nEND"
+  end
+
+  it 'should support an arbitrary require and include from .siterc' do
+    # right now, only works if the required file has the methods defined 
+    # at the TOPLEVEL ... hrm ... will work on this later
+    setup 'require_and_include'
+    get.should == 'foo: bar && test ArbitraryHelpers#test'
+  end
+
+  it "should support my little helper file with: require 'resir/helper' " do
+    setup 'my_helper'
+    get.should == "from helper: <script type=\"text/javascript\" src=\"/js/testing123.js\"></script>"
   end
 
 end
