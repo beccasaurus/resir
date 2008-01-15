@@ -1,1 +1,1 @@
-Dir['lib/resir/filters/*.rb'].each { |filter| load filter }
+Dir[ FIle.dirname(__FILE__) + '/filters/*.rb' ].each { |filter| load filter }

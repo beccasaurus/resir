@@ -1,4 +1,4 @@
-Dir['lib/resir/extensions/*.rb'].each { |filter| load filter }
+Dir[ File.dirname(__FILE__) + '/extensions/*.rb' ].each { |filter| load filter }
 
 # misc extensions / top-level methods with no homes
 
