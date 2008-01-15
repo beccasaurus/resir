@@ -1,4 +1,5 @@
-Dir[ File.dirname(__FILE__) + '/extensions/*.rb' ].each { |filter| load filter }
+#Dir[ File.dirname(__FILE__) + '/extensions/*.rb' ].each { |extension| load extension }
+%w(metaid inflector inflections hash).each { |extension| load File.dirname(__FILE__) + "/extensions/#{extension}.rb" }
 
 # misc extensions / top-level methods with no homes
 

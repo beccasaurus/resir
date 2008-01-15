@@ -16,7 +16,7 @@ describe Resir, 'filters and extensions' do
 
 end
 
-describe 'default_filters_and_extensions' do
+describe 'default filters' do
   
   before do
     load 'lib/resir/filters.rb'
