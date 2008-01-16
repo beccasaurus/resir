@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe 'filters' do
 
   before do
-    @server, @request = nil, nil
+    reset
   end
 
   def setup site
@@ -14,8 +14,25 @@ describe 'filters' do
   def get path="/#{@site}"
     @request.get(path).body
   end
+  def reset
+    @server, @request = nil, nil
+  end
 
   it 'should support erb' do
+     setup 'erb'
+     get.should == 'hello. misc stuff. /'
+  end
+
+
+  it 'should NOT support partials, if not required, even if another site previously required them' do
+     setup 'erb'
+     get.should == 'hello. misc stuff. /'
+
+     reset
+     setup 'erb_no_partial'
+     get.should_not == 'hello. misc stuff. /'
+
+     reset
      setup 'erb'
      get.should == 'hello. misc stuff. /'
   end

@@ -46,24 +46,6 @@ class Resir::Site::Responder
   end
 
   def render_page name
-
-    # MOVE TO HELPERS/PARTIAL
-    #
-    unless @site.auto_partials = false
-      root = @site.root_directory + '/'
-      Dir["#{root}*"].collect { |o| o.sub(root,'') }.select { |o| not o.include?'.' }.
-      select{|o| File.directory?"#{root}#{o}" }.each do |directory| 
-        unless @site.no_partials and @site.no_partials.include?directory
-          metaclass.send(:define_method, directory) { |name| render "#{directory}/#{name}" }
-          inflected = Inflector.singularize directory
-          inflected = Inflector.pluralize directory if inflected == directory
-          if inflected != directory
-            metaclass.send(:define_method, inflected) { |name| render "#{directory}/#{name}" }
-          end
-        end
-      end
-    end
-
     @responder      = self     # required by markaby (so far as i can tell)
     @layout         = 'layout' # make into a Resir/Site variable ... override at global or site level
     @content        = render_template name

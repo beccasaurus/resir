@@ -1,1 +1,2 @@
 require 'resir/filters/erb'
+require 'resir/helpers/partial'
