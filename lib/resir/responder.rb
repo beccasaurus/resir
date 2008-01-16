@@ -46,9 +46,8 @@ class Resir::Site::Responder
   end
 
   def render_page name
-    # define some neato methods ...
-    #
-    # need to clean up ... and needs to take the template root into account??
+
+    # MOVE TO HELPERS/PARTIAL
     #
     unless @site.auto_partials = false
       root = @site.root_directory + '/'

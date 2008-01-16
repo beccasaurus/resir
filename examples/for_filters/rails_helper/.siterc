@@ -1,2 +1,2 @@
 require 'resir/filters/erb'
-require 'resir/rails'
+require 'resir/helpers/rails'
