@@ -1,2 +1,2 @@
-load_filters 'erb'
-load_helpers 'arbitrary'
+filters 'erb'
+helpers 'arbitrary'

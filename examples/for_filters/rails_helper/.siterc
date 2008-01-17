@@ -1,2 +1,2 @@
-load_filters 'erb'
-load_helpers 'rails'
+filters 'erb'
+helpers 'rails'

@@ -1,1 +1,1 @@
-load_filters 'erb', 'haml', 'markaby', 'markdown', 'sass', 'textile'
+filters 'erb', 'haml', 'markaby', 'markdown', 'sass', 'textile'

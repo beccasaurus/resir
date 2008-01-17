@@ -1,3 +1,0 @@
-self.template_directory = 'templates'
-
-load_filters 'erb'

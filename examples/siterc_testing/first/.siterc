@@ -1,8 +1,8 @@
-load_filters 'erb'
+filters 'erb'
 
 self.loaded_filters.manual = lambda { |t,b| "manually set this filter in .siterc" }
 
-load_filters( 'sample', 'more_filters' ) {
+filters( 'sample', 'more_filters' ) {
 
   misc { |text,binding| "i am the misc filter" }
 
@@ -15,7 +15,7 @@ def new_site_method
   "hello from new site method!"
 end
 
-load_helpers( 'sample', 'example' ) {
+helpers( 'sample', 'example' ) {
 
   def blah str
     str.to_s.upcase

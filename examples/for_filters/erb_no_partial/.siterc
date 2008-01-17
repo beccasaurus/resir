@@ -1,1 +1,1 @@
-load_filters 'erb'
+filters 'erb'

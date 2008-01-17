@@ -1,2 +1,2 @@
-load_helpers 'remi'
-load_filters 'erb'
+helpers 'remi'
+filters 'erb'

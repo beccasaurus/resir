@@ -1,2 +1,2 @@
-load_filters 'erb'
-load_helpers 'partial'
+filters 'erb'
+helpers 'partial'

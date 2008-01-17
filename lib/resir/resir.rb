@@ -10,7 +10,7 @@ class Resir
   end
 
   # REFACTOR ME!  the file finding in load helpers and filters is a great candidate for refactoring!
-  def self.load_helpers *args, &block
+  def self.helpers *args, &block
     require 'resir/site'
     require 'resir/responder'
     responder = Resir::Site::Responder
@@ -40,7 +40,7 @@ class Resir
   end
 
   # wow, refactor me!  ... # IDENTICAL to the one in site
-  def self.load_filters *args, &block
+  def self.filters *args, &block
     unless args.empty?
       args.each do |filter_to_find|
         found = nil
