@@ -21,6 +21,10 @@ load_helpers( 'sample', 'example' ) {
     str.to_s.upcase
   end
 
+  def request_response_test
+    "req: #{request.class.name} request.env: #{request.env.class.name} resp: #{response.class.name}"
+  end
+
 }
 
 # vim:set ft=ruby:

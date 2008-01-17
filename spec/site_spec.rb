@@ -18,8 +18,8 @@ describe Resir::Site do
     site.helper_search_path.should include('.')
     site.filter_search_path.should include('.')
 
-    site.helper_search_path.should include(File.join site_dir, '.site')
-    site.filter_search_path.should include(File.join site_dir, '.site')
+    site.helper_search_path.should include(File.join( site_dir, '.site'))
+    site.filter_search_path.should include(File.join( site_dir, '.site'))
   end
 
   it "should have access to the server holding it, if run by server" do

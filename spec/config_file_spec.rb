@@ -6,6 +6,13 @@ end
 
 describe 'siterc config files' do
 
+  it 'helpers should have access to request and response objects' do
+    site = Resir::Site.new 'examples/siterc_testing/first'
+    req  = Rack::MockRequest.new site
+    
+    req.get('/request_response').body.should == 'request_response test: req: Rack::Request request.env: Hash resp: Rack::Response'
+  end
+
   it 'should be able to load helpers by passing the name of the helper(s)' do
     site = Resir::Site.new 'examples/siterc_testing/first'
     req  = Rack::MockRequest.new site

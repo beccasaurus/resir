@@ -29,10 +29,10 @@ class Resir::Site
       args.each do |helper_to_find|
         found = nil
         path = self.helper_search_path.find { |path|
-          File.file?( File.join path, helper_to_find ) or File.file?( File.join path, helper_to_find + '.rb' )
+          File.file?( File.join( path, helper_to_find )) or File.file?( File.join( path, helper_to_find + '.rb' ))
         }
         if path
-          if File.file?( File.join path, helper_to_find )
+          if File.file?( File.join( path, helper_to_find ))
             filepath = File.join path, helper_to_find
           else
             filepath = File.join( path, helper_to_find + '.rb' )
@@ -55,10 +55,10 @@ class Resir::Site
       args.each do |filter_to_find|
         found = nil
         path = self.filter_search_path.find { |path|
-          File.file?( File.join path, filter_to_find ) or File.file?( File.join path, filter_to_find + '.rb' )
+          File.file?( File.join( path, filter_to_find )) or File.file?( File.join( path, filter_to_find + '.rb' ))
         }
         if path
-          if File.file?( File.join path, filter_to_find )
+          if File.file?( File.join( path, filter_to_find ))
             filepath = File.join path, filter_to_find
           else
             filepath = File.join( path, filter_to_find + '.rb' )
