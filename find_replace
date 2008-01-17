@@ -12,6 +12,7 @@ fi
 FIND="$1"
 REPLACE="$2"
 NOW="$(date +%Y%m%d_%H%M%S)"
+mkdir tmp 2>/dev/null
 
 echo -e "\nsearching for instances of: '$FIND' ... \n"
 FOUND=$(grep -rio "$FIND" . | sed 's/:.*//g' | sed 's/^.\///g' | grep -v '^tmp' | grep -v '^.git' | grep -v 'Binary file' | uniq)
