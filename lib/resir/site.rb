@@ -22,13 +22,22 @@ class Resir::Site
   end
 
   def site; self; end
-  def helpers *args, &block
+  def load_helpers *args, &block
     unless args.empty?
-      puts "i would require these ... #{args.inspect}"
+      puts "i would require these helpers ... #{args.inspect}"
     end
     
     unless block.nil?
       responder.class_eval &block
+    end
+  end
+  def load_filters *args, &block
+    unless args.empty?
+      puts "i would require these filters ... #{args.inspect}"
+    end
+    
+    unless block.nil?
+      puts "NEED TO REQUIRE FILTERS"
     end
   end
 
@@ -52,6 +61,13 @@ class Resir::Site
     # falls back to Resir, but filters need to live on their own.
     filter_hash = {}
     filter_hash.instance_eval {
+      def []( key )
+        unless keys.include?key
+          Resir.filters[key] # we don't have it - ask Resir for it
+        else
+          super # self[key] # we seem to have this value - go ahead and return it
+        end
+      end
       def method_missing name, *args
         if name.to_s[/=$/] # trying to SET value
           name = name.to_s.sub( /=$/, '' )

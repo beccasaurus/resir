@@ -33,7 +33,13 @@ class Resir
 
   def self.render_with_filters string, binding, *filters
     rendered = string
-    filters = filters.collect { |name| Resir.filters[name] } unless filters.first.respond_to?:call
+    begin
+      site = eval 'site', binding
+    rescue NameError
+      site = Resir if site.nil?
+    end
+    site = Resir unless site.is_a?Resir::Site
+    filters  = filters.collect { |name| site.filters[name] } unless filters.first.respond_to?:call
     filters.select{ |x| not x.nil? }.each { |callable| rendered = callable[rendered,binding] }
     rendered.strip
   end

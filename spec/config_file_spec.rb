@@ -6,6 +6,18 @@ end
 
 describe 'siterc config files' do
 
+  it "it can manually add filters into site.filters" do
+    Resir.filters.keys.should_not include('manual')
+
+    site = Resir::Site.new 'examples/siterc_testing/first'
+    req  = Rack::MockRequest.new site
+    
+    site.filters.keys.should include('manual')
+    Resir.filters.keys.should_not include('manual')
+    
+    req.get('/page').body.should == 'manually set this filter in .siterc'
+  end
+
   it "should have access to site (as 'site' or 'self')" do
     site = Resir::Site.new 'examples/siterc_testing/first'
 

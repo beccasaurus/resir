@@ -1,5 +1,11 @@
 load 'resir/filters/erb.rb' # old-style ... load cause require got mad ... hence why i'm altering these
 
+self.filters.manual = lambda { |t,b| "manually set this filter in .siterc" }
+
+load_filters( 'one', 'two' ) {
+  # my block
+}
+
 self.hello = "hello from a new variable added by siterc"
 site.added_to_site = 'added this to var of name site'
 
@@ -7,7 +13,7 @@ def new_site_method
   "hello from new site method!"
 end
 
-helpers( 'simple', 'example' ) {
+load_helpers( 'simple', 'example' ) {
 
   def blah str
     str.to_s.upcase
