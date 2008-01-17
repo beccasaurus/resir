@@ -37,7 +37,19 @@ class Resir::Site
     end
     
     unless block.nil?
-      puts "NEED TO REQUIRE FILTERS"
+      @filter_maker.instance_eval &block
+    end
+  end
+
+  # move this someplace ...
+  #
+  # it handles making filters from RC files, with a pretty syntax
+  class FilterMaker
+    def initialize site
+      @site = site
+    end
+    def method_missing name, *args, &block
+      @site.filters[name.to_s] = block
     end
   end
 
@@ -52,6 +64,7 @@ class Resir::Site
     self.root_directory = root_dir
     self.name           = File.basename self.root_directory
 
+    @filter_maker = FilterMaker.new self # required for pretty RC load_filter syntax
     siterc = File.join self.root_directory, Resir.site_rc_file
     eval File.read(siterc) unless not File.file?siterc
   end
