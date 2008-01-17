@@ -9,6 +9,9 @@
 #     <%= partial :nav %>
 #     <%= puppy :rover %>
 #
+
+# puts "require 'resir/helpers/partial' OBSOLETE.  need to make new version of this ..."
+
 class Resir::Site::Responder
 
   def render_page name

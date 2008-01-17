@@ -75,7 +75,7 @@ describe 'filters' do
 
   it "should support rails ActionView::Helpers" do
     setup 'rails_helper'
-    get.should == "hi.  <input id=\"name\" name=\"name\" type=\"text\" value=\"john\" />"
+    get.should == "hi.  <input name=\"name\" type=\"text\" id=\"name\" value=\"john\"></input>"
   end
 
 end

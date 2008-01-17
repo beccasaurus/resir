@@ -1,5 +1,6 @@
 # include a number of ActionView helpers, for people who're comfy with rails
 if lib_available? 'active_support'
+
   require 'action_view/helpers/tag_helper.rb'
   require 'action_view/helpers/form_tag_helper.rb'
   require 'action_view/helpers/asset_tag_helper.rb'
@@ -8,7 +9,10 @@ if lib_available? 'active_support'
   require 'action_view/helpers/url_helper.rb'
   require 'action_view/helpers/date_helper.rb'
   require 'action_view/helpers/number_helper.rb'
-  class Resir::Site::Responder
+ 
+# include EVERYWHERE!  sheesh .... *** MOVE TO HELPER ***
+
+#  class Resir::Site::Responder
     include ActionView::Helpers::TagHelper 
     include ActionView::Helpers::FormTagHelper 
     include ActionView::Helpers::AssetTagHelper 
@@ -17,5 +21,6 @@ if lib_available? 'active_support'
     include ActionView::Helpers::UrlHelper
     include ActionView::Helpers::DateHelper
     include ActionView::Helpers::NumberHelper
-  end
+#  end
+
 end
