@@ -37,8 +37,45 @@ class Resir::Site
     require 'resir/responder'
     @responder = Resir::Site::Responder.clone
 
-    # setup variables and set them up to fall back to Resir.variables
-    # if not found (not for '=' methods, only when looking up the value)
+    init_variables
+    init_filters
+
+    self.root_directory = root_dir
+    self.name           = File.basename self.root_directory
+
+    siterc = File.join self.root_directory, Resir.site_rc_file
+    eval File.read(siterc) unless not File.file?siterc
+  end
+
+  def init_filters
+    # initially, filters was one of the sites' normal variables that
+    # falls back to Resir, but filters need to live on their own.
+    filter_hash = {}
+    filter_hash.instance_eval {
+      def method_missing name, *args
+        if name.to_s[/=$/] # trying to SET value
+          name = name.to_s.sub( /=$/, '' )
+
+          self[name] = args.first # nomatter what, if we're SETTING, we set it locally
+
+        else # trying to GET value
+          name = name.to_s
+
+          unless keys.include?name
+            Resir.filters[name] # we don't have it - ask Resir for it
+          else
+            self[name] # we seem to have this value - go ahead and return it
+          end
+
+        end
+      end
+    }
+    self.filters = filter_hash
+  end
+
+  def init_variables
+    # makes variables an empty hash and sets them up with method_missing
+    # to fall back to Resir if it has something that the site doesn't
     @variables = {}
     self.variables.instance_eval {
       def method_missing_with_fallback name, *args
@@ -53,12 +90,6 @@ class Resir::Site
       alias method_missing_without_fallback method_missing
       alias method_missing method_missing_with_fallback
     }
-
-    self.root_directory = root_dir
-    self.name           = File.basename self.root_directory
-
-    siterc = File.join self.root_directory, Resir.site_rc_file
-    eval File.read(siterc) unless not File.file?siterc
   end
 
   def get_template name
