@@ -1,2 +1,2 @@
-require 'resir/filters/erb'
-require 'resir/helpers/partial'
+load_filters 'erb'
+load_helpers 'partial'

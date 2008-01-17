@@ -79,6 +79,7 @@ class Resir::Site
   #
   # it handles making filters from RC files, with a pretty syntax
   class FilterMaker
+    attr_accessor :site # so you can get to the site from your filters {} block
     def initialize site
       @site = site
     end
@@ -106,7 +107,11 @@ class Resir::Site
 
   def load_siterc
     siterc = File.join self.root_directory, Resir.site_rc_file
-    eval File.read(siterc) if File.file?siterc
+    begin
+      eval File.read(siterc) if File.file?siterc
+    rescue NameError => ex
+      puts "got crazy NameError, trying to eval #{siterc} ... [#{ex}]"
+    end
   end
 
   def init_search_paths

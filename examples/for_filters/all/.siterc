@@ -1,1 +1,1 @@
-require 'resir/filters'
+load_filters 'erb', 'haml', 'markaby', 'markdown', 'sass', 'textile'

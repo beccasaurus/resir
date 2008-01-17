@@ -41,7 +41,6 @@ class Resir
 
   # wow, refactor me!  ... # IDENTICAL to the one in site
   def self.load_filters *args, &block
-    puts "called load_filters on Resir ... with #{args.inspect}"
     unless args.empty?
       args.each do |filter_to_find|
         found = nil
@@ -115,7 +114,7 @@ class Resir
       site = Resir if site.nil?
     end
     site = Resir unless site.is_a?Resir::Site
-    filters  = filters.collect { |name| site.filters[name] } unless filters.first.respond_to?:call
+    filters = filters.collect { |name| site.filters[name] } unless filters.first.respond_to?:call
     filters.select{ |x| not x.nil? }.each { |callable| rendered = callable[rendered,binding] }
     rendered.strip
   end

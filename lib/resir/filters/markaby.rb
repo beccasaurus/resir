@@ -4,7 +4,7 @@
 
 if lib_available? 'markaby'
 
-  Resir.filters.mab = lambda { |text,binding|
+  mab { |text,binding|
   
     assigns = {}
     eval('instance_variables',binding).each do |name|
@@ -29,4 +29,5 @@ if lib_available? 'markaby'
     
     mab.capture { eval text }
   }
+
 end

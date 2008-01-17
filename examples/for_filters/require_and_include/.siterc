@@ -1,2 +1,2 @@
-require 'resir/filters/erb'
-require self.root_directory + '/.site/arbitrary'
+load_filters 'erb'
+load_helpers 'arbitrary'

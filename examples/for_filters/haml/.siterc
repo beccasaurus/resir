@@ -1,1 +1,1 @@
-require 'resir/filters/haml'
+load_filters 'haml'

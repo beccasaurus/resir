@@ -1,2 +1,2 @@
-require 'resir/helper'
-require 'resir/filters/erb'
+load_helpers 'remi'
+load_filters 'erb'

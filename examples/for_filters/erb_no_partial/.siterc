@@ -1,1 +1,1 @@
-require 'resir/filters/erb'
+load_filters 'erb'

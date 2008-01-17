@@ -1,4 +1,4 @@
-load 'resir/filters/erb.rb' # old-style ... load cause require got mad ... hence why i'm altering these
+load_filters 'erb'
 
 self.filters.manual = lambda { |t,b| "manually set this filter in .siterc" }
 

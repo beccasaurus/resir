@@ -1,1 +1,3 @@
-Resir.filters.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
+load_filters {
+	erb { |text,b| require 'erb'; ERB.new(text).result(b) }
+}
