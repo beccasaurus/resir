@@ -22,35 +22,35 @@ describe 'filters' do
 
   it "should let a site override (and add new) filters, per site, not globally" do
     site = Resir::Site.new '/examples/siterc_testing/first'
-    Resir.filters.keys.should_not include('blah')
-    site.filters.keys.should_not include('blah')
+    Resir.loaded_filters.keys.should_not include('blah')
+    site.loaded_filters.keys.should_not include('blah')
 
-    Resir.filters.blah = lambda { |t,b| "hello there" }
-    Resir.filters.keys.should include('blah')
-    site.filters.keys.should_not include('blah')
+    Resir.loaded_filters.blah = lambda { |t,b| "hello there" }
+    Resir.loaded_filters.keys.should include('blah')
+    site.loaded_filters.keys.should_not include('blah')
 
-    Resir.filters.blah.should_not be_nil
-    site.filters.blah.should_not be_nil
+    Resir.loaded_filters.blah.should_not be_nil
+    site.loaded_filters.blah.should_not be_nil
 
-    Resir.filters['blah'].should_not be_nil
-    site.filters['blah'].should_not be_nil
+    Resir.loaded_filters['blah'].should_not be_nil
+    site.loaded_filters['blah'].should_not be_nil
 
-    Resir.filters.delete 'blah'
-    Resir.filters.keys.should_not include('blah')
-    site.filters.keys.should_not include('blah')
-    Resir.filters.blah.should be_nil
-    site.filters.blah.should be_nil
-    Resir.filters['blah'].should be_nil
-    site.filters['blah'].should be_nil
+    Resir.loaded_filters.delete 'blah'
+    Resir.loaded_filters.keys.should_not include('blah')
+    site.loaded_filters.keys.should_not include('blah')
+    Resir.loaded_filters.blah.should be_nil
+    site.loaded_filters.blah.should be_nil
+    Resir.loaded_filters['blah'].should be_nil
+    site.loaded_filters['blah'].should be_nil
     
-    site.filters.blah = lambda { |t,b| "hi there" }
-    site.filters.keys.should include('blah')
-    Resir.filters.keys.should_not include('blah')
-    site.filters.blah.should_not be_nil
-    Resir.filters.blah.should be_nil
+    site.loaded_filters.blah = lambda { |t,b| "hi there" }
+    site.loaded_filters.keys.should include('blah')
+    Resir.loaded_filters.keys.should_not include('blah')
+    site.loaded_filters.blah.should_not be_nil
+    Resir.loaded_filters.blah.should be_nil
 
-    site.filters['blah'].should_not be_nil
-    Resir.filters['blah'].should be_nil
+    site.loaded_filters['blah'].should_not be_nil
+    Resir.loaded_filters['blah'].should be_nil
   end
 
   it 'should support erb' do

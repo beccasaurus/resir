@@ -1,6 +1,6 @@
 load_filters 'erb'
 
-self.filters.manual = lambda { |t,b| "manually set this filter in .siterc" }
+self.loaded_filters.manual = lambda { |t,b| "manually set this filter in .siterc" }
 
 load_filters( 'sample', 'more_filters' ) {
 

@@ -87,7 +87,7 @@ class Resir::Site
     # filters?
     # helpers?
     def method_missing name, *args, &block
-      @site.filters[name.to_s] = block
+      @site.loaded_filters[name.to_s] = block
     end
   end
 
@@ -136,7 +136,7 @@ class Resir::Site
     filter_hash.instance_eval {
       def []( key )
         unless keys.include?key
-          Resir.filters[key] # we don't have it - ask Resir for it
+          Resir.loaded_filters[key] # we don't have it - ask Resir for it
         else
           super # self[key] # we seem to have this value - go ahead and return it
         end
@@ -151,7 +151,7 @@ class Resir::Site
           name = name.to_s
 
           unless keys.include?name
-            Resir.filters[name] # we don't have it - ask Resir for it
+            Resir.loaded_filters[name] # we don't have it - ask Resir for it
           else
             self[name] # we seem to have this value - go ahead and return it
           end
@@ -159,7 +159,7 @@ class Resir::Site
         end
       end
     }
-    self.filters = filter_hash
+    self.loaded_filters = filter_hash
   end
 
   def init_variables

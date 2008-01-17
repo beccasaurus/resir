@@ -57,12 +57,12 @@ describe Resir do
   end
 
   it "should allow me to render a template string String (including arguments of extension names)" do
-    Resir.filters.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
+    Resir.loaded_filters.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
     Resir::render('hello <%= "there" %>', binding, 'erb').should == 'hello there'
   end
   
   it "should allow me to render a template string String (including an array of extension names)" do
-    Resir.filters.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
+    Resir.loaded_filters.erb = lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
     Resir::render('hello <%= "there" %>', binding, ['erb']).should == 'hello there'
   end
 

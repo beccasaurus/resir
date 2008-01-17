@@ -31,27 +31,27 @@ describe 'siterc config files' do
     req.get('/yet_another.more_filters_filter').body.should == "i'm from more filters ... filter!"
   end
 
-  it "it can add filters into site.filters using a pretty load_filter { erb {} } style syntax" do
-    Resir.filters.keys.should_not include('misc')
+  it "it can add filters into site.loaded_filters using a pretty load_filter { erb {} } style syntax" do
+    Resir.loaded_filters.keys.should_not include('misc')
 
     site = Resir::Site.new 'examples/siterc_testing/first'
     req  = Rack::MockRequest.new site
     
-    site.filters.keys.should include('misc')
-    Resir.filters.keys.should_not include('misc')
+    site.loaded_filters.keys.should include('misc')
+    Resir.loaded_filters.keys.should_not include('misc')
     
     req.get('/blah').body.should == 'i am the misc filter'
     req.get('/blah.misc').body.should == 'i am the misc filter'
   end
 
-  it "it can manually add filters into site.filters" do
-    Resir.filters.keys.should_not include('manual')
+  it "it can manually add filters into site.loaded_filters" do
+    Resir.loaded_filters.keys.should_not include('manual')
 
     site = Resir::Site.new 'examples/siterc_testing/first'
     req  = Rack::MockRequest.new site
     
-    site.filters.keys.should include('manual')
-    Resir.filters.keys.should_not include('manual')
+    site.loaded_filters.keys.should include('manual')
+    Resir.loaded_filters.keys.should_not include('manual')
     
     req.get('/page').body.should == 'manually set this filter in .siterc'
   end

@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe Resir, 'filters and extensions' do
 
   it 'should be initialized' do
-    Resir.filters.should_not be_nil
+    Resir.loaded_filters.should_not be_nil
   end
 
   it 'should get the extensions for a filename' do
@@ -51,7 +51,7 @@ sass
   end
 
   after do
-    Resir.filters.clear
+    Resir.loaded_filters.clear
   end
 
 end

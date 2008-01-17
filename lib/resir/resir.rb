@@ -70,7 +70,7 @@ class Resir
   # it handles making filters from RC files, with a pretty syntax
   class GlobalFilterMaker
     def method_missing name, *args, &block
-      Resir.filters[name.to_s] = block
+      Resir.loaded_filters[name.to_s] = block
     end
   end
 
@@ -99,7 +99,7 @@ class Resir
   end
 
   def self.get_extensions filename
-    self.initialize if Resir.filters == 0
+    self.initialize if Resir.loaded_filters == 0
     filename = File.basename filename
     extensions = filename.split('.')
     without_extensions = extensions.shift
@@ -114,7 +114,7 @@ class Resir
       site = Resir if site.nil?
     end
     site = Resir unless site.is_a?Resir::Site
-    filters = filters.collect { |name| site.filters[name] } unless filters.first.respond_to?:call
+    filters = filters.collect { |name| site.loaded_filters[name] } unless filters.first.respond_to?:call
     filters.select{ |x| not x.nil? }.each { |callable| rendered = callable[rendered,binding] }
     rendered.strip
   end

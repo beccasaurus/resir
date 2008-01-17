@@ -1,6 +1,6 @@
 Resir.global_rc_file      ||= '/etc/resirrc'       # path of system-wide config/extension file 
 Resir.user_rc_file        ||= '~/.resirrc'         # path of user-specific config/extension file
-Resir.filters             ||= {}                   # available filters for rendering templates
+Resir.loaded_filters             ||= {}                   # available filters for rendering templates
 Resir.directory_index     ||= %w( index home )     # paths to look for when requesting '/' for a site
 
 # these paths are *relative* to a site's root directory
