@@ -2,6 +2,25 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe Resir do
 
+  it 'should have the path to the gem directory and helpers and filters' do
+    resir_dir   = File.expand_path(File.dirname(__FILE__) + '/..')
+    helper_path = File.join resir_dir, 'lib/resir/helpers'
+    filter_path = File.join resir_dir, 'lib/resir/filters'
+
+    Resir::path_to_resir.should == resir_dir
+    Resir::helper_search_path.should include(helper_path)
+    Resir::filter_search_path.should include(filter_path)
+
+    Resir::helper_search_path.should include('.')
+    Resir::filter_search_path.should include('.')
+
+    Resir::helper_search_path.should include('~/.resir')
+    Resir::filter_search_path.should include('~/.resir')
+
+    Resir::helper_search_path.should include('~/.resir/helpers')
+    Resir::filter_search_path.should include('~/.resir/filters')
+  end
+
   it 'should get file extensions for filenames, from last to first' do
     Resir::get_extensions('index.mkd.erb').should == %w(erb mkd)
     Resir::get_extensions('index').should == []

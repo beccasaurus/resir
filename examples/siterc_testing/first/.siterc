@@ -2,7 +2,7 @@ load 'resir/filters/erb.rb' # old-style ... load cause require got mad ... hence
 
 self.filters.manual = lambda { |t,b| "manually set this filter in .siterc" }
 
-load_filters( 'one', 'two' ) {
+load_filters( 'sample', 'more_filters' ) {
 
   misc { |text,binding| "i am the misc filter" }
 

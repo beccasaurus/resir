@@ -2,6 +2,26 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe Resir::Site do
 
+  it 'should have the path to the gem directory and helpers and filters and local site' do
+    site        = Resir::Site.new 'examples/ambrose/starmonkey'
+    site_dir    = File.expand_path(site.root_directory)
+    resir_dir   = File.expand_path(File.dirname(__FILE__) + '/..')
+    helper_path = File.join resir_dir, 'lib/resir/helpers'
+    filter_path = File.join resir_dir, 'lib/resir/filters'
+
+    site.helper_search_path.should include(helper_path)
+    site.filter_search_path.should include(filter_path)
+    
+    site.helper_search_path.should include(site_dir)
+    site.filter_search_path.should include(site_dir)
+
+    site.helper_search_path.should include('.')
+    site.filter_search_path.should include('.')
+
+    site.helper_search_path.should include(File.join site_dir, '.site')
+    site.filter_search_path.should include(File.join site_dir, '.site')
+  end
+
   it "should have access to the server holding it, if run by server" do
     server = Resir::Server.new 'examples'
     server.sites.length.should > 0

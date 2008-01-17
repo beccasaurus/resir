@@ -31,9 +31,26 @@ class Resir::Site
       responder.class_eval &block
     end
   end
+
+  # wow, refactor me!  ...
   def load_filters *args, &block
     unless args.empty?
-      puts "i would require these filters ... #{args.inspect}"
+      args.each do |filter_to_find|
+        found = nil
+        path = self.filter_search_path.find { |path|
+          File.file?( File.join path, filter_to_find ) or File.file?( File.join path, filter_to_find + '.rb' )
+        }
+        if path
+          if File.file?( File.join path, filter_to_find )
+            filepath = File.join path, filter_to_find
+          else
+            filepath = File.join( path, filter_to_find + '.rb' )
+          end
+          @filter_maker.instance_eval File.read(filepath)
+        else
+          puts "Filter not found: #{filter_to_find}"
+        end
+      end
     end
     
     unless block.nil?
@@ -61,12 +78,27 @@ class Resir::Site
     init_variables
     init_filters
 
-    self.root_directory = root_dir
-    self.name           = File.basename self.root_directory
+    self.root_directory      = root_dir
+    self.real_root_directory = File.expand_path self.root_directory
+    self.name                = File.basename self.root_directory
+
+    init_search_paths
 
     @filter_maker = FilterMaker.new self # required for pretty RC load_filter syntax
     siterc = File.join self.root_directory, Resir.site_rc_file
     eval File.read(siterc) unless not File.file?siterc
+  end
+
+  def init_search_paths
+    self.helper_search_path = []
+    self.helper_search_path << self.real_root_directory
+    self.helper_search_path << File.join( self.real_root_directory, '.site' )
+    self.helper_search_path += Resir::helper_search_path
+
+    self.filter_search_path = []
+    self.filter_search_path << self.real_root_directory
+    self.filter_search_path << File.join( self.real_root_directory, '.site' )
+    self.filter_search_path += Resir::filter_search_path
   end
 
   def init_filters

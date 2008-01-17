@@ -1,10 +1,20 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe 'resirrc config files' do
-
+  it 'should support the same new syntax changes and improvements that siterc files do'
 end
 
 describe 'siterc config files' do
+
+  it 'should be able to load filters by passing the name of the filter(s)' do
+    site = Resir::Site.new 'examples/siterc_testing/first'
+    req  = Rack::MockRequest.new site
+    
+    req.get('/some_path').body.should == 'i am the sample filter!'
+    req.get('/another_page').body.should == 'i am sample_two, required when you require sample!  NEATO!!!'
+    req.get('/yet_another').body.should == "i'm from more filters ... filter!"
+    req.get('/yet_another.more_filters_filter').body.should == "i'm from more filters ... filter!"
+  end
 
   it "it can add filters into site.filters using a pretty load_filter { erb {} } style syntax" do
     Resir.filters.keys.should_not include('misc')

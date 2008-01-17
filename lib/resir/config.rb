@@ -9,3 +9,12 @@ Resir.public_directory    ||= 'public'             # where static files go
 Resir.template_directory  ||= ''                   # where we look for all files to render
 
 Resir.logger              ||= Logger.new STDOUT
+
+Resir::path_to_resir      ||= File.expand_path(File.dirname(__FILE__) + '/../..')
+Resir::path_to_resir_lib  ||= File.join Resir::path_to_resir, 'lib'
+
+Resir::helper_search_path ||= ['.', '~/.resir', '~/.resir/helpers']
+Resir::helper_search_path << File.join(Resir::path_to_resir_lib, 'resir/helpers')
+
+Resir::filter_search_path ||= ['.', '~/.resir', '~/.resir/filters']
+Resir::filter_search_path << File.join(Resir::path_to_resir_lib, 'resir/filters')
