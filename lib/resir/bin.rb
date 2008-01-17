@@ -18,16 +18,41 @@ class Resir::Bin
     end
   end
 
+  # helper to set/change the default action that resir calls 
+  # when an action is not found that matches the first argument
+  # eg.
+  #   resir action some args
+  #
+  # resir some args # calls default action with 'some args'
   def self.set_default action
     @default_action = action.to_sym
   end
   set_default :create_or_serve
 
+  # return the help for an action
+  #
+  # provide a method such as `myaction_help` that returns a string
+  # of documentation (conventionally starting with 'Usage: ...')
   def self.help_for action
     help_method = "#{action}_help".to_sym
     self.send( help_method ) if self.respond_to?help_method
   end
 
+  # grab everything on a line ending with 'Summary:' and use it
+  # as the command's summary (to display on `resir commands`)
+  def self.summary_for action
+    doco = help_for action
+    if doco
+      match = /Summary:\n*(.*)/.match doco
+      if match and match.length > 1
+        match[1].strip
+      end
+    end
+  end
+
+  # print out the help for the action provided
+  #
+  # prints resir_help if no action provided
   def self.help *action
     action = action.shift
     if action.nil?
@@ -83,6 +108,15 @@ class Resir::Bin
 
   def self.resir_help
     "default documentation for resir here!"
+  end
+
+  def self.help_help
+    <<doco
+Usage: resir help ACTION
+
+  Summary:
+    Provide help on the 'resir' command
+doco
   end
 
 end
