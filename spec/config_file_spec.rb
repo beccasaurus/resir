@@ -6,6 +6,14 @@ end
 
 describe 'siterc config files' do
 
+  it 'should be able to load helpers by passing the name of the helper(s)' do
+    site = Resir::Site.new 'examples/siterc_testing/first'
+    req  = Rack::MockRequest.new site
+    
+    req.get('/example_test').body.should == 'testing example: i am an example helper!'
+    req.get('/sample_test').body.should == %{testing sample: hello from sample helper ... you passed me [:hi, \"there\", 5]}
+  end
+
   it 'should be able to load filters by passing the name of the filter(s)' do
     site = Resir::Site.new 'examples/siterc_testing/first'
     req  = Rack::MockRequest.new site

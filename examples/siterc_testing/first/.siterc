@@ -15,7 +15,7 @@ def new_site_method
   "hello from new site method!"
 end
 
-load_helpers( 'simple', 'example' ) {
+load_helpers( 'sample', 'example' ) {
 
   def blah str
     str.to_s.upcase

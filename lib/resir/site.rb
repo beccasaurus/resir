@@ -22,9 +22,26 @@ class Resir::Site
   end
 
   def site; self; end
+
+  # REFACTOR ME!  the file finding in load helpers and filters is a great candidate for refactoring!
   def load_helpers *args, &block
     unless args.empty?
-      puts "i would require these helpers ... #{args.inspect}"
+      args.each do |helper_to_find|
+        found = nil
+        path = self.helper_search_path.find { |path|
+          File.file?( File.join path, helper_to_find ) or File.file?( File.join path, helper_to_find + '.rb' )
+        }
+        if path
+          if File.file?( File.join path, helper_to_find )
+            filepath = File.join path, helper_to_find
+          else
+            filepath = File.join( path, helper_to_find + '.rb' )
+          end
+          responder.class_eval File.read(filepath)
+        else
+          puts "Helper not found: #{helper_to_find}"
+        end
+      end
     end
     
     unless block.nil?
