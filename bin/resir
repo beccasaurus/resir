@@ -1,29 +1,4 @@
 #! /usr/bin/env ruby
 require File.dirname(__FILE__) + '/../lib/resir'
 
-if lib_available? 'thin'
-  handler = Rack::Handler::Thin
-elsif lib_available? 'mongrel'
-  handler = Rack::Handler::Mongrel
-elsif lib_available? 'webrick'
-  handler = Rack::Handler::Webrick
-else
-  puts "No server found to run Resir!
-To install server:
-    sudo gem install thin
-    OR sudo gem install mongrel
-    OR install webrick
-"
-end
-
-server = Resir::Server.new *ARGV
-unless server.sites.empty?
-  handler.run server
-else
-  puts "No sites found.
-
-Usage:  #{$0} directory, *directories  [recursively finds sites]
-
-** be sure to put a .siterc file in your site's directory. **
-** it can be empty, but this is how we find your site! **"
-end
+Resir::Bin.call ARGV
