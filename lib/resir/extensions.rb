@@ -12,6 +12,14 @@ def lib_available? lib
   end
 end
 
+# out good friend, Symbol#to_proc ... ( borrowed from active_support )
+class Symbol  
+  # ["foo", "bar"].map &:reverse #=> ['oof', 'rab']
+  def to_proc
+     Proc.new{|*args| args.shift.__send__(self, *args)}
+   end 
+end
+
 class Module
   # for, you know ... aliasing methods!  ( borrowed from active_support )
   def alias_method_chain(target, feature)

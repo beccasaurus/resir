@@ -1,15 +1,91 @@
 class Resir
   meta_include IndifferentVariableHash
 
+  #class << self
+  #  attr_accessor :filter_maker
+  #end
+
   def self.init_logger
     eval( 'def log; Resir::logger; end', TOPLEVEL_BINDING )
+  end
+
+  # REFACTOR ME!  the file finding in load helpers and filters is a great candidate for refactoring!
+  def self.load_helpers *args, &block
+    require 'resir/site'
+    require 'resir/responder'
+    responder = Resir::Site::Responder
+
+    unless args.empty?
+      args.each do |helper_to_find|
+        found = nil
+        path = Resir::helper_search_path.find { |path| # <--- changed path
+          File.file?( File.join( path, helper_to_find )) or File.file?( File.join( path, helper_to_find + '.rb' ))
+        }
+        if path
+          if File.file?( File.join( path, helper_to_find ))
+            filepath = File.join path, helper_to_find
+          else
+            filepath = File.join( path, helper_to_find + '.rb' )
+          end
+          responder.class_eval File.read(filepath) ### <--- see the setting of responder at the top of the method
+        else
+          puts "Helper not found: #{helper_to_find}"
+        end
+      end
+    end
+    
+    unless block.nil?
+      responder.class_eval &block
+    end
+  end
+
+  # wow, refactor me!  ... # IDENTICAL to the one in site
+  def self.load_filters *args, &block
+    puts "called load_filters on Resir ... with #{args.inspect}"
+    unless args.empty?
+      args.each do |filter_to_find|
+        found = nil
+        path = Resir::filter_search_path.find { |path| # <--- changed path
+          File.file?( File.join( path, filter_to_find )) or File.file?( File.join( path, filter_to_find + '.rb' ))
+        }
+        if path
+          if File.file?( File.join( path, filter_to_find ))
+            filepath = File.join path, filter_to_find
+          else
+            filepath = File.join( path, filter_to_find + '.rb' )
+          end
+          @filter_maker.instance_eval File.read(filepath)
+        else
+          puts "Filter not found: #{filter_to_find}"
+        end
+      end
+    end
+    
+    unless block.nil?
+      @filter_maker.instance_eval &block
+    end
+  end
+
+  # move this someplace ...
+  #
+  # it handles making filters from RC files, with a pretty syntax
+  class GlobalFilterMaker
+    def method_missing name, *args, &block
+      Resir.filters[name.to_s] = block
+    end
+  end
+
+  def self.load_resirrc
+    resirrc = File.expand_path(Resir.user_rc_file)
+    eval File.read(resirrc) if File.file?resirrc
   end
 
   def self.initialize
     @variables ||= {}
     load 'resir/config.rb'
     init_logger unless defined?log
-    load File.expand_path(Resir.user_rc_file) if File.file?File.expand_path(Resir.user_rc_file)
+    @filter_maker = GlobalFilterMaker.new
+    load_resirrc
   end
 
   initialize

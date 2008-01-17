@@ -91,6 +91,7 @@ class Resir::Site
   def initialize root_dir
     require 'resir/responder'
     @responder = Resir::Site::Responder.clone
+    @filter_maker = FilterMaker.new self # required for pretty RC load_filter syntax
 
     init_variables
     init_filters
@@ -100,10 +101,12 @@ class Resir::Site
     self.name                = File.basename self.root_directory
 
     init_search_paths
+    load_siterc
+  end
 
-    @filter_maker = FilterMaker.new self # required for pretty RC load_filter syntax
+  def load_siterc
     siterc = File.join self.root_directory, Resir.site_rc_file
-    eval File.read(siterc) unless not File.file?siterc
+    eval File.read(siterc) if File.file?siterc
   end
 
   def init_search_paths
