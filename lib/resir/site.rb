@@ -83,6 +83,9 @@ class Resir::Site
     def initialize site
       @site = site
     end
+    # filter?
+    # filters?
+    # helpers?
     def method_missing name, *args, &block
       @site.filters[name.to_s] = block
     end

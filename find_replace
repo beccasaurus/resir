@@ -1,0 +1,32 @@
+#! /bin/bash
+#
+# global find replace for our project, to help with refactoring ...
+#
+# usage: ./find_replace 'find this' 'replace with this'
+#
+if [[ -z "$1" ]] || [[ -z "$2" ]] ; then
+	echo "usage:    $0 'find this' 'replace with this'"
+	exit
+fi
+
+FIND="$1"
+REPLACE="$2"
+NOW="$(date +%Y%m%d_%H%M%S)"
+
+echo -e "\nsearching for instances of: '$FIND' ... \n"
+FOUND=$(grep -rio "$FIND" . | uniq | sed 's/:.*//g' | sed 's/^.\///g')
+echo -e "found: -------------- \n${FOUND}\n ---------------------"
+
+echo -e "\nreplacing '$FIND' in these files with '$REPLACE' ... \n"
+for file in $FOUND; do
+	temp_file="tmp/$file.find_replace.$NOW"
+	echo "cp $file $temp_file"
+	cp $file $temp_file
+	echo "cat $temp_file | sed 's/$FIND/$REPLACE/g' > $file"
+	cat $temp_file | sed 's/$FIND/$REPLACE/g' > $file
+done
+echo -e "\ndone!\n"
+
+echo "re-searching to see if '$FIND' can still be found ...\n"
+FOUND=$(grep -rio "$FIND" . | uniq | sed 's/:.*//g' | sed 's/^.\///g')
+echo -e "\nfound: -------------- \n${FOUND}\n ---------------------\n"
