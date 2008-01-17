@@ -12,22 +12,30 @@
 class Resir::Site
   include IndifferentVariableHash
 
-  attr_accessor :server
+  attr_accessor :server, :responder
 
   def call env
-    require 'resir/responder'
+    reply          = responder.new self
+    reply.request  = Rack::Request.new env
+    reply.response = Rack::Response.new
+    reply.call env
+  end
 
-    responder          = Resir::Site::Responder.new self
-    responder.request  = Rack::Request.new env
-    responder.response = Rack::Response.new
-
-    response  = responder.call env
-    responder = nil
-    response
+  def site; self; end
+  def helpers *args, &block
+    unless args.empty?
+      puts "i would require these ... #{args.inspect}"
+    end
+    
+    unless block.nil?
+      responder.class_eval &block
+    end
   end
 
   # root_dir:: absolute or relative path to site's root directory  
   def initialize root_dir
+    require 'resir/responder'
+    @responder = Resir::Site::Responder.clone
 
     # setup variables and set them up to fall back to Resir.variables
     # if not found (not for '=' methods, only when looking up the value)

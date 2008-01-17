@@ -1,0 +1,16 @@
+require 'resir/filters/erb' # old-style ...
+
+self.hello = "hello from a new variable added by siterc"
+site.added_to_site = 'added this to var of name site'
+
+def new_site_method
+  "hello from new site method!"
+end
+
+helpers( 'simple', 'example' ) {
+
+  def blah str
+    str.to_s.upcase
+  end
+
+}
