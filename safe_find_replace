@@ -22,9 +22,9 @@ for file in $FOUND; do
 	without_slashes=$(echo "$file" | sed 's/\//__/g')
 	temp_file="tmp/$without_slashes.find_replace.$NOW"
 	echo "cp $file $temp_file"
-	cp $file $temp_file
+#	cp $file $temp_file
 	echo "cat $temp_file | sed 's/$FIND/$REPLACE/g' > $file"
-	cat $temp_file | sed "s/$FIND/$REPLACE/g" > $file
+#	cat $temp_file | sed "s/$FIND/$REPLACE/g" > $file
 done
 echo -e "\ndone!\n"
 
