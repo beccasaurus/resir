@@ -7,3 +7,4 @@ tmp/*
 coverage/*
 lib/*.html
 lib/**/*.html
+resir-website/vim_snippets/*
