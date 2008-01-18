@@ -18,3 +18,6 @@ Resir::helper_search_path << File.join(Resir::path_to_resir_lib, 'resir/helpers'
 
 Resir::filter_search_path ||= ['.', '~/.resir', '~/.resir/filters']
 Resir::filter_search_path << File.join(Resir::path_to_resir_lib, 'resir/filters')
+
+Resir::command_search_path ||= ['.', '~/.resir', '~/.resir/commands']
+Resir::command_search_path << File.join(Resir::path_to_resir_lib, 'resir/commands')

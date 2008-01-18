@@ -1,47 +1,51 @@
 class Resir::Bin
 
   class << self
-    attr_accessor :default_action
+    attr_accessor :default_command
   end
 
+  # main method for executing
+  # eg.
+  #     Resir::Bin ARGV
   def self.call command_line_arguments
-    action = command_line_arguments.shift
+    command = command_line_arguments.shift
+    command = command.gsub('-','') # replace all dashes, to help catch -h / --help
     
-    if action.nil?
+    if command.nil?
       help
-    elsif self.respond_to?action.to_sym
-      self.send(action, *command_line_arguments)
-    elsif @default_action
-      self.send(@default_action, *( [action] + command_line_arguments ))
+    elsif self.respond_to?command.to_sym
+      self.send(command, *command_line_arguments)
+    elsif @default_command
+      self.send(@default_command, *( [command] + command_line_arguments ))
     else
-      puts "not sure what to do.  please set_default :action"
+      puts "not sure what to do.  please set_default :command"
     end
   end
 
-  # helper to set/change the default action that resir calls 
-  # when an action is not found that matches the first argument
+  # helper to set/change the default command that resir calls 
+  # when an command is not found that matches the first argument
   # eg.
-  #   resir action some args
+  #   resir command some args
   #
-  # resir some args # calls default action with 'some args'
-  def self.set_default action
-    @default_action = action.to_sym
+  # resir some args # calls default command with 'some args'
+  def self.set_default command
+    @default_command = command.to_sym
   end
   set_default :create_or_serve
 
-  # return the help for an action
+  # return the help for an command
   #
-  # provide a method such as `myaction_help` that returns a string
+  # provide a method such as `mycommand_help` that returns a string
   # of documentation (conventionally starting with 'Usage: ...')
-  def self.help_for action
-    help_method = "#{action}_help".to_sym
+  def self.help_for command
+    help_method = "#{command}_help".to_sym
     self.send( help_method ) if self.respond_to?help_method
   end
 
   # grab everything on a line ending with 'Summary:' and use it
   # as the command's summary (to display on `resir commands`)
-  def self.summary_for action
-    doco = help_for action
+  def self.summary_for command
+    doco = help_for command
     if doco
       match = /Summary:\n*(.*)/.match doco
       if match and match.length > 1
@@ -50,17 +54,17 @@ class Resir::Bin
     end
   end
 
-  # print out the help for the action provided
+  # print out the help for the command provided
   #
-  # prints resir_help if no action provided
-  def self.help *action
-    action = action.shift
-    if action.nil?
+  # prints resir_help if no command provided
+  def self.help *command
+    command = command.shift
+    if command.nil?
       puts help_for( :resir )
-    elsif (doco = help_for action)
+    elsif (doco = help_for command)
       puts doco
     else
-      puts "No documentation found for action: #{action}"
+      puts "No documentation found for command: #{command}"
     end
   end
 
@@ -70,7 +74,11 @@ class Resir::Bin
     # `#{cmd}`
   end
 
-  # default actions
+  # default commands --------------------------------------------------------------------------
+
+  def self.version *args
+    puts Resir::VERSION::STRING
+  end
 
   def self.create_or_serve *dirs
     if dirs.length == 1 and not File.exist?File.expand_path(dirs.first) # resir ~/myapps/my_app
@@ -92,6 +100,13 @@ class Resir::Bin
     end
   end
 
+  # short aliases (for -v [version] and -h [help])
+
+  class << self
+    alias h help
+    alias v version
+  end
+
   # helper methods
 
   def self.get_rack_handler
@@ -107,12 +122,33 @@ class Resir::Bin
   # help / usage docs
 
   def self.resir_help
-    "default documentation for resir here!"
+    <<doco
+
+  resir == %{ Ridiculously Easy Site's In Ruby }
+                        by remi                
+
+    Usage:
+      resir -h/--help
+      resir -v/--version
+      resir command [arguments...] [options...]
+
+    Examples:
+      resir ~/my_new_site       # create site
+      resir ~/my_existing_site  # run site
+
+    Further help:
+      resir help commands       list all 'resir' commands
+      resir help examples       show some examples of usage [NYI]
+      resir help <COMMAND>      show help on COMMAND
+                                  (e.g. 'resir help ...') [<-- add cmd]
+    Further information:
+      http://resir.rubyforge.org
+doco
   end
 
   def self.help_help
     <<doco
-Usage: resir help ACTION
+Usage: resir help COMMAND
 
   Summary:
     Provide help on the 'resir' command

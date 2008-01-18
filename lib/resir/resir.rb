@@ -9,6 +9,34 @@ class Resir
     eval( 'def log; Resir::logger; end', TOPLEVEL_BINDING )
   end
 
+  def self.commands *args, &block
+    require 'resir/bin'
+    resir_bin = Resir::Bin
+
+    unless args.empty?
+      args.each do |command_to_find|
+        found = nil
+        path = Resir::command_search_path.find { |path| # <--- changed path
+          File.file?( File.join( path, command_to_find )) or File.file?( File.join( path, command_to_find + '.rb' ))
+        }
+        if path
+          if File.file?( File.join( path, command_to_find ))
+            filepath = File.join path, command_to_find
+          else
+            filepath = File.join( path, command_to_find + '.rb' )
+          end
+          resir_bin.instance_eval File.read(filepath) ### <--- see the setting of resir_bin at the top of the method
+        else
+          puts "Command not found: #{command_to_find}"
+        end
+      end
+    end
+    
+    unless block.nil?
+      resir_bin.instance_eval &block
+    end
+  end
+
   # REFACTOR ME!  the file finding in load helpers and filters is a great candidate for refactoring!
   def self.helpers *args, &block
     require 'resir/site'
