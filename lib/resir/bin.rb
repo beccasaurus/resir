@@ -31,7 +31,11 @@ class Resir::Bin
   def self.set_default command
     @default_command = command.to_sym
   end
-  set_default :create_or_serve
+
+  # 
+  # SETS DEFAULT COMMAND
+  #
+  set_default :create_or_preview
 
   # return the help for an command
   #
@@ -245,21 +249,21 @@ doco
   end
 
   # -----------------------
-  def self.create_or_serve_help
+  def self.create_or_preview_help
     <<doco
-Usage: resir create_or_serve NEW_OR_EXISTING_SITE_DIR
+Usage: resir create_or_preview NEW_OR_EXISTING_SITE_DIR
 
   About:
-    This will call 'resir create' or 'resir serve'
+    This will call 'resir create' or 'resir preview'
     depending on whether or not the argument(s) passed 
     in exist.
 
   Examples:
-    resir create_or_serve ~/i-dont-exist  # will create dir/site
-    resir create_or_serve ~/i-dont-exist  # will serve new site
+    resir create_or_preview ~/i-dont-exist  # will create dir/site
+    resir create_or_preview ~/i-dont-exist  # will preview new site
 
   Summary:
-    Creates or serves a site, depending on if it exists yet
+    Creates or previews a site, depending on if it exists yet
 doco
   end
 
