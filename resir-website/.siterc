@@ -1,10 +1,8 @@
 filters :erb, :markdown
-helpers :siterc_reloader, :capture
+helpers :siterc_reloader, :capture, :remi, :vim_highlighting
 
 filters {
-
   upcase { |t,b| t.upcase }
-
 }
 
 # vim:set ft=ruby:

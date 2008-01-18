@@ -1,8 +1,32 @@
+<% @vim_no_cache = false %>
+
 Welcome!
 =======
 
-<% filter( :mkd, :upcase ) do %>
-hello __there__ *person*
+testing syntax highlighting:
+
+<% filter( :vim ) do %>
+vim: file.rb
+def something *args, &block
+  puts "hello!"
+end
+<% end %>
+
+<% filter( :vim ) do %>
+vim: index.me
+Hello World
+===========
+
+ * markdown
+ * [is the best](/is-the-best)
+ * don't you think?
+
+The Time
+--------
+
+is currently: <\%= Time.now %>
 <% end %>
 
 ##### <%= Time.now %>
+
+<%= css vim_stylesheet if @vim_filter_called %>

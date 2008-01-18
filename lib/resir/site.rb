@@ -116,8 +116,9 @@ class Resir::Site
   end
 
   def load_siterc
-    siterc = File.join self.root_directory, Resir.site_rc_file
     begin
+      site = self # .siterc needs access to site!
+      siterc = File.join self.root_directory, Resir.site_rc_file
       eval File.read(siterc) if File.file?siterc
     rescue NameError => ex
       puts "got crazy NameError, trying to eval #{siterc} ... [#{ex}]"
