@@ -25,6 +25,7 @@ class Resir::Site
 
   # REFACTOR ME!  the file finding in load helpers and filters is a great candidate for refactoring!
   def helpers *args, &block
+    site = self # <-- give code in the main method of the block something to hold onto!
     unless args.empty?
       args.each do |arg|
         helper_to_find = arg.to_s

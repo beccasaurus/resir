@@ -8,15 +8,15 @@ class Resir::Bin
   # eg.
   #     Resir::Bin ARGV
   def self.call command_line_arguments
-    command = command_line_arguments.shift
-    command = command.gsub('-','') unless command.nil? # replace all dashes, to help catch -h / --help
+    original = command_line_arguments.shift
+    command  = original.gsub('-','') unless original.nil? # replace all dashes, to help catch -h / --help
     
     if command.nil?
       help
     elsif self.respond_to?command.to_sym
       self.send(command, *command_line_arguments)
     elsif @default_command
-      self.send(@default_command, *( [command] + command_line_arguments ))
+      self.send(@default_command, *( [original] + command_line_arguments ))
     else
       puts "not sure what to do.  please set_default :command"
     end

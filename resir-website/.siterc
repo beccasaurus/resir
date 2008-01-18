@@ -1,0 +1,4 @@
+helpers 'siterc_reloader'
+filters :erb, :markdown
+
+# vim:set ft=ruby:
