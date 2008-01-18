@@ -1,0 +1,3 @@
+Clear up directory
+ * Move all scripts to ./script
+ * move example websites into ./examples/websites, so other exampels can go in there ...

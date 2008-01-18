@@ -56,10 +56,22 @@ def concat(string, binding)
 end 
 
 def filter *args, &block
+
   unless args.nil? or block.nil?
     args = args.map &:to_s
-    content = capture(&block)
-    content = Resir::render_with_filters content, binding(), *args
-    concat content, block.binding
+    
+    if eval("defined?#{Resir.erb_variable}", block.binding)
+    
+      content = capture(&block)
+      content = Resir::render_with_filters content, binding(), *args
+      concat content, block.binding
+
+    else # assume we're being passed a simple String in block
+
+      content = block.call
+      content = Resir::render_with_filters content, binding(), *args
+      content
+
+    end
   end
 end
