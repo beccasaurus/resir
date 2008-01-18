@@ -9,7 +9,7 @@ class Resir::Bin
   #     Resir::Bin ARGV
   def self.call command_line_arguments
     command = command_line_arguments.shift
-    command = command.gsub('-','') # replace all dashes, to help catch -h / --help
+    command = command.gsub('-','') unless command.nil? # replace all dashes, to help catch -h / --help
     
     if command.nil?
       help
@@ -71,33 +71,70 @@ class Resir::Bin
   # call a system command (returning the results) but puts the command before executing
   def self.system_command cmd
     puts cmd
-    # `#{cmd}`
+    `#{cmd}`
   end
 
   # default commands --------------------------------------------------------------------------
 
-  def self.version *args
+  def self.version *no_args
     puts Resir::VERSION::STRING
   end
 
-  def self.create_or_serve *dirs
-    if dirs.length == 1 and not File.exist?File.expand_path(dirs.first) # resir ~/myapps/my_app
-      path = File.expand_path(dirs.first)
+  def self.create dir
+    path = File.expand_path dir
+    unless File.exist? path
       puts "Creating new site: #{path}\n\n"
       system_command "mkdir '#{path}'"
       system_command "touch '#{File.join( path, Resir::site_rc_file )}'"
-
     else
+      "File already exists: #{path}"
+    end
+  end
 
-      server = Resir::Server.new *dirs
-      unless server.sites.empty?
-        get_rack_handler.run server
-      else
-        puts "\nNo sites found.\n"
-        print_help :create_or_serve
-      end
+  def self.serve *dirs
+    server = Resir::Server.new *dirs
+    unless server.sites.empty?
+      get_rack_handler.run server
+    else
+      puts "\nNo sites found.\n"
+      print_help :create_or_serve
+    end
+  end
+
+  def self.create_or_serve *dirs
+    # if we pass in something that doesn't exist
+    if dirs.length == 1 and not File.exist?File.expand_path(dirs.first)
+      create( dirs.first )
+
+    # if we pass in anything else (probably a directory, or list of directories)
+    else
+      serve *dirs
 
     end
+  end
+
+  # print out commands and their summaries
+  #
+  # only commands with help doco are printed!
+  def self.commands *no_args
+    commands = self.methods.grep( /_help/ ).collect{ |help_method| help_method.gsub( /(.*)_help/ , '\1' ) } - ['resir']
+    commands.sort!
+    before_spaces = 4
+    after_spaces  = 18
+    text = commands.inject(''){ |all,cmd| all << "\n#{' ' * before_spaces}#{cmd}#{' ' * (after_spaces - cmd.length)}#{summary_for(cmd)}" }
+    puts <<doco
+resir commands are:
+
+    DEFAULT COMMAND   #{@default_command}
+#{text}
+
+For help on a particular command, use 'resir help COMMAND'.
+doco
+#
+#[NOT YET IMPLEMENTED:]
+#Commands may be abbreviated, so long as they are unumbiguous.
+#e.g. 'resir h commands' is short for 'resir help commands'.
+#doco
   end
 
   # short aliases (for -v [version] and -h [help])
@@ -121,6 +158,7 @@ class Resir::Bin
 
   # help / usage docs
 
+  # -----------------------
   def self.resir_help
     <<doco
 
@@ -131,6 +169,7 @@ class Resir::Bin
       resir -h/--help
       resir -v/--version
       resir command [arguments...] [options...]
+      resir [arguments...] [options...] # calls #{@default_command}
 
     Examples:
       resir ~/my_new_site       # create site
@@ -138,20 +177,89 @@ class Resir::Bin
 
     Further help:
       resir help commands       list all 'resir' commands
-      resir help examples       show some examples of usage [NYI]
       resir help <COMMAND>      show help on COMMAND
-                                  (e.g. 'resir help ...') [<-- add cmd]
+                                  (e.g. 'resir help help')
     Further information:
       http://resir.rubyforge.org
 doco
   end
 
+  # -----------------------
   def self.help_help
     <<doco
 Usage: resir help COMMAND
 
   Summary:
     Provide help on the 'resir' command
+doco
+  end
+
+  # -----------------------
+  def self.commands_help
+    <<doco
+Usage: resir commands
+
+  Summary:
+    List all 'resir' commands
+doco
+  end
+
+  
+  # -----------------------
+  def self.preview_help
+    <<doco
+Usage: resir preview SITE_DIR [, SITE_DIR]
+
+  About:
+    Will recursively search all of the directories given
+    for resir sites (looking for .siterc files) and will 
+    start a local webserver to preview the sites
+
+    Currently, uses Thin (if available) otherwise 
+    Mongrel (if available) otherwise Webrick
+
+  TODO:
+    Accept --server option to force particular handler
+    Accept --port option to force partucular port
+
+  Summary:
+    Start a server to preview the site(s) passed in
+doco
+  end
+
+  # -----------------------
+  def self.create_help
+    <<doco
+Usage: resir create SITE_DIRECTORY_TO_CREATE
+
+  About:
+    Will create a new directory with the name given
+    and will touch an empty .siterc file within it.
+
+  TODO:
+    Use template in ~/.resir/template (or overriden dir)
+
+  Summary:
+    Create a new resir site
+doco
+  end
+
+  # -----------------------
+  def self.create_or_serve_help
+    <<doco
+Usage: resir create_or_serve NEW_OR_EXISTING_SITE_DIR
+
+  About:
+    This will call 'resir create' or 'resir serve'
+    depending on whether or not the argument(s) passed 
+    in exist.
+
+  Examples:
+    resir create_or_serve ~/i-dont-exist  # will create dir/site
+    resir create_or_serve ~/i-dont-exist  # will serve new site
+
+  Summary:
+    Creates or serves a site, depending on if it exists yet
 doco
   end
 
