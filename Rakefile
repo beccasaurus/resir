@@ -28,11 +28,11 @@ require 'spec/rake/spectask'
 #   t.rcov_opts = ['--exclude', 'examples']
 # end
 
-desc "Run specs and rcov"
-Spec::Rake::SpecTask.new('code_coverage') do |t|
-  t.spec_opts = ['--options', 'spec/spec_rcov.opts']
-  t.spec_files = FileList['stories/simple_story.rb','spec/**/*_spec.rb']
-  t.rcov = true
-  # t.rcov_opts = ['--exclude', 'spec,/usr/lib/ruby', '--rails', '--text-report']
-  t.rcov_opts = ['--exclude', 'spec,/usr/lib/ruby', '--text-report']
-end
+## desc "Run specs and rcov"
+## Spec::Rake::SpecTask.new('code_coverage') do |t|
+##   t.spec_opts = ['--options', 'spec/spec_rcov.opts']
+##   t.spec_files = FileList['stories/simple_story.rb','spec/**/*_spec.rb']
+##   t.rcov = true
+##   # t.rcov_opts = ['--exclude', 'spec,/usr/lib/ruby', '--rails', '--text-report']
+##   t.rcov_opts = ['--exclude', 'spec,/usr/lib/ruby', '--text-report']
+## end

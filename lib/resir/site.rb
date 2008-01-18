@@ -26,7 +26,8 @@ class Resir::Site
   # REFACTOR ME!  the file finding in load helpers and filters is a great candidate for refactoring!
   def helpers *args, &block
     unless args.empty?
-      args.each do |helper_to_find|
+      args.each do |arg|
+        helper_to_find = arg.to_s
         found = nil
         path = self.helper_search_path.find { |path|
           File.file?( File.join( path, helper_to_find )) or File.file?( File.join( path, helper_to_find + '.rb' ))
@@ -52,7 +53,8 @@ class Resir::Site
   # wow, refactor me!  ...
   def filters *args, &block
     unless args.empty?
-      args.each do |filter_to_find|
+      args.each do |arg|
+        filter_to_find = arg.to_s
         found = nil
         path = self.filter_search_path.find { |path|
           File.file?( File.join( path, filter_to_find )) or File.file?( File.join( path, filter_to_find + '.rb' ))

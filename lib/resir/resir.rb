@@ -14,7 +14,8 @@ class Resir
     resir_bin = Resir::Bin
 
     unless args.empty?
-      args.each do |command_to_find|
+      args.each do |arg|
+        command_to_find = arg.to_s
         found = nil
         path = Resir::command_search_path.find { |path| # <--- changed path
           File.file?( File.join( path, command_to_find )) or File.file?( File.join( path, command_to_find + '.rb' ))
@@ -44,7 +45,8 @@ class Resir
     responder = Resir::Site::Responder
 
     unless args.empty?
-      args.each do |helper_to_find|
+      args.each do |arg|
+        helper_to_find = arg.to_s
         found = nil
         path = Resir::helper_search_path.find { |path| # <--- changed path
           File.file?( File.join( path, helper_to_find )) or File.file?( File.join( path, helper_to_find + '.rb' ))
@@ -70,7 +72,8 @@ class Resir
   # wow, refactor me!  ... # IDENTICAL to the one in site
   def self.filters *args, &block
     unless args.empty?
-      args.each do |filter_to_find|
+      args.each do |arg|
+        filter_to_find = arg.to_s
         found = nil
         path = Resir::filter_search_path.find { |path| # <--- changed path
           File.file?( File.join( path, filter_to_find )) or File.file?( File.join( path, filter_to_find + '.rb' ))
@@ -104,7 +107,11 @@ class Resir
 
   def self.load_resirrc
     resirrc = File.expand_path(Resir.user_rc_file)
-    eval File.read(resirrc) if File.file?resirrc
+    begin
+      eval File.read(resirrc) if File.file?resirrc
+    rescue Exception => ex
+      puts "Oops!  There was a problem loading your #{Resir.user_rc_file} file.\n\n#{ex}"
+    end
   end
 
   def self.initialize
