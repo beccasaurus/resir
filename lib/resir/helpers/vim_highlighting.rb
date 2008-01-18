@@ -27,6 +27,8 @@ site.filters {
 
   vim { |text,binding| 
     eval('@vim_filter_called = true',binding) # can use to include stylesheet as necessry
+    before   = text[/(.*)vim:/m].sub('vim:','')
+    text     = text[/vim:.*/m] # ignore everything before vim:
     split    = text.split("\n")
     filename = split.shift.sub /vim: (.*)/, '\1'
     content  = split.join "\n"
@@ -49,6 +51,7 @@ site.filters {
       if File.file?full_html_path
         html = File.read(full_html_path)
         html = html[/<pre>(.*)<\/pre>/m].sub('<pre>','<pre class="code vim">')
+        html = before + "\n" + html
         File.open(full_html_path,'w'){ |f| f << html }
         html
       else
