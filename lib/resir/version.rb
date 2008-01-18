@@ -3,9 +3,9 @@ class Resir
   module VERSION
     MAJOR = 0
     MINOR = 4
-    TINY  = 0
+    TINY  = 5
     
-    SCM = 67
+    SCM = 92
     
     # ^ SCM set via script : `git log --pretty=oneline | wc -l`.strip
 
