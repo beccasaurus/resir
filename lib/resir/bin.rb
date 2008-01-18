@@ -101,11 +101,11 @@ class Resir::Bin
       get_rack_handler.run server
     else
       puts "\nNo sites found.\n"
-      print_help :create_or_serve
+      print_help :create_or_preview
     end
   end
 
-  def self.create_or_serve *dirs
+  def self.create_or_preview *dirs
     # if we pass in something that doesn't exist
     if dirs.length == 1 and not File.exist?File.expand_path(dirs.first)
       create( dirs.first )
@@ -133,6 +133,10 @@ resir commands are:
 #{text}
 
 For help on a particular command, use 'resir help COMMAND'.
+
+If you've made a command and it's not showing up here, you
+need to make help method named 'COMMAND_help' that returns 
+your commands help documentation.
 doco
 #
 #[NOT YET IMPLEMENTED:]
@@ -264,6 +268,16 @@ Usage: resir create_or_preview NEW_OR_EXISTING_SITE_DIR
 
   Summary:
     Creates or previews a site, depending on if it exists yet
+doco
+  end
+
+  # -----------------------
+  def self.version_help
+    <<doco
+Usage: resir version
+
+  Summary:
+    Outputs the current version of resir
 doco
   end
 
