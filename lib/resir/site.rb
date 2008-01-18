@@ -15,10 +15,14 @@ class Resir::Site
   attr_accessor :server, :responder
 
   def call env
-    reply          = responder.new self
-    reply.request  = Rack::Request.new env
-    reply.response = Rack::Response.new
-    reply.call env
+    begin
+      reply          = responder.new self
+      reply.request  = Rack::Request.new env
+      reply.response = Rack::Response.new
+      reply.call env
+    rescue Exception => ex
+      [200, {'Content-Type' => 'text/html'}, ex.to_s]
+    end
   end
 
   def site; self; end

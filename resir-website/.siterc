@@ -1,4 +1,10 @@
-helpers 'siterc_reloader'
 filters :erb, :markdown
+helpers :siterc_reloader, :capture
+
+filters {
+
+  upcase { |t,b| t.upcase }
+
+}
 
 # vim:set ft=ruby:
