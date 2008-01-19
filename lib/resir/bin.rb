@@ -1,6 +1,47 @@
 class Resir::Bin
 
+  # RESIR
+  def self.resir_help
+    <<doco
+
+  resir == %{ Ridiculously Easy Site's In Ruby }
+                        by remi                
+
+    Usage:
+      resir -h/--help
+      resir -v/--version
+      resir command [arguments...] [options...]
+      resir [arguments...] [options...] # calls #{@default_command}
+
+    Examples:
+      resir ~/my_new_site       # create site
+      resir ~/my_existing_site  # run site
+
+    Further help:
+      resir help commands       list all 'resir' commands
+      resir help <COMMAND>      show help on COMMAND
+                                  (e.g. 'resir help help')
+    Further information:
+      http://resir.rubyforge.org
+doco
+  end
+
   class << self
+    # default_command will be run if you specify resir with something like:
+    #
+    #     resir /some/directory --an-option
+    #
+    # where the first argument given (/some/directory) doesn't match up to 
+    # any valid resir commands ... so the arguments get passed to whatever 
+    # command is set as the 'default command'
+    #
+    # to override:
+    #
+    #     # untested, but should work:
+    #     commands {
+    #       set_default :my_cooler_command
+    #     }
+    #
     attr_accessor :default_command
   end
 
@@ -32,15 +73,15 @@ class Resir::Bin
     @default_command = command.to_sym
   end
 
-  # 
-  # SETS DEFAULT COMMAND
-  #
-  set_default :create_or_preview
+  # HELP
+  def self.version_help
+    <<doco
+Usage: resir version
 
-  # return the help for an command
-  #
-  # provide a method such as `mycommand_help` that returns a string
-  # of documentation (conventionally starting with 'Usage: ...')
+  Summary:
+    Outputs the current version of resir
+doco
+  end
   def self.help_for command
     help_method = "#{command}_help".to_sym
     self.send( help_method ) if self.respond_to?help_method
@@ -58,9 +99,15 @@ class Resir::Bin
     end
   end
 
-  # print out the help for the command provided
-  #
-  # prints resir_help if no command provided
+  # HELP
+  def self.help_help
+    <<doco
+Usage: resir help COMMAND
+
+  Summary:
+    Provide help on the 'resir' command
+doco
+  end
   def self.help *command
     command = command.shift
     if command.nil?
@@ -78,247 +125,31 @@ class Resir::Bin
     `#{cmd}`
   end
 
-  # default commands --------------------------------------------------------------------------
-
-  def self.version *no_args
-    puts Resir::VERSION::STRING
-  end
-
-  def self.create dir
-    path = File.expand_path dir
-    unless File.exist? path
-      puts "Creating new site: #{path}\n\n"
-      system_command "mkdir '#{path}'"
-      system_command "touch '#{File.join( path, Resir::site_rc_file )}'"
-    else
-      "File already exists: #{path}"
-    end
-  end
-
-  def self.serve *dirs
-    server = Resir::Server.new *dirs
-    unless server.sites.empty?
-      get_rack_handler.run server
-    else
-      puts "\nNo sites found.\n"
-      print_help :create_or_preview
-    end
-  end
-
-  def self.create_or_preview *dirs
-    # if we pass in something that doesn't exist
-    if dirs.length == 1 and not File.exist?File.expand_path(dirs.first)
-      create( dirs.first )
-
-    # if we pass in anything else (probably a directory, or list of directories)
-    else
-      serve *dirs
-
-    end
-  end
-
-  def self.console *dirs
-    unless dirs.nil? or dirs.empty?
-      $server = Resir::Server.new *dirs
-      $sites  = $server.sites
-      puts "resir console started\n\n"
-      puts "variables:"
-      puts "  $server:   the loaded Resir::Server"
-      puts "  $sites:    the loaded Resir::Site's\n\n"
-    else
-      puts "resir console started\n\n"
-      puts "use `resir console my-site` to start console with sites\n\n"
-    end
-
-    require 'irb'
-    ARGV.clear
-    IRB.start
-  end
-
-  # print out commands and their summaries
-  #
-  # only commands with help doco are printed!
-  def self.commands *no_args
-    commands = self.methods.grep( /_help/ ).collect{ |help_method| help_method.gsub( /(.*)_help/ , '\1' ) } - ['resir']
-    commands.sort!
-    before_spaces = 4
-    after_spaces  = 18
-    text = commands.inject(''){ |all,cmd| all << "\n#{' ' * before_spaces}#{cmd}#{' ' * (after_spaces - cmd.length)}#{summary_for(cmd)}" }
-    puts <<doco
-resir commands are:
-
-    DEFAULT COMMAND   #{@default_command}
-#{text}
-
-For help on a particular command, use 'resir help COMMAND'.
-
-If you've made a command and it's not showing up here, you
-need to make help method named 'COMMAND_help' that returns 
-your commands help documentation.
-doco
-#
-#[NOT YET IMPLEMENTED:]
-#Commands may be abbreviated, so long as they are unumbiguous.
-#e.g. 'resir h commands' is short for 'resir help commands'.
-#doco
-  end
-
-  # short aliases (for -v [version] and -h [help])
-
-  class << self
-    alias h help
-    alias v version
-  end
-
-  # helper methods
-
-  def self.get_rack_handler
-    if lib_available? 'thin'
-      Rack::Handler::Thin
-    elsif lib_available? 'mongrel'
-      Rack::Handler::Mongrel
-    elsif lib_available? 'webrick'
-      Rack::Handler::Webrick
-    end
-  end
-
-  # help / usage docs
-
-  # -----------------------
-  def self.resir_help
-    <<doco
-
-  resir == %{ Ridiculously Easy Site's In Ruby }
-                        by remi                
-
-    Usage:
-      resir -h/--help
-      resir -v/--version
-      resir command [arguments...] [options...]
-      resir [arguments...] [options...] # calls #{@default_command}
-
-    Examples:
-      resir ~/my_new_site       # create site
-      resir ~/my_existing_site  # run site
-
-    Further help:
-      resir help commands       list all 'resir' commands
-      resir help <COMMAND>      show help on COMMAND
-                                  (e.g. 'resir help help')
-    Further information:
-      http://resir.rubyforge.org
-doco
-  end
-
-  # -----------------------
-  def self.help_help
-    <<doco
-Usage: resir help COMMAND
-
-  Summary:
-    Provide help on the 'resir' command
-doco
-  end
-
-  # -----------------------
-  def self.commands_help
-    <<doco
-Usage: resir commands
-
-  Summary:
-    List all 'resir' commands
-doco
-  end
-
-  
-  # -----------------------
-  def self.preview_help
-    <<doco
-Usage: resir preview SITE_DIR [, SITE_DIR]
-
-  About:
-    Will recursively search all of the directories given
-    for resir sites (looking for .siterc files) and will 
-    start a local webserver to preview the sites
-
-    Currently, uses Thin (if available) otherwise 
-    Mongrel (if available) otherwise Webrick
-
-  TODO:
-    Accept --server option to force particular handler
-    Accept --port option to force partucular port
-
-  Summary:
-    Start a server to preview the site(s) passed in
-doco
-  end
-
-  # -----------------------
-  def self.create_help
-    <<doco
-Usage: resir create SITE_DIRECTORY_TO_CREATE
-
-  About:
-    Will create a new directory with the name given
-    and will touch an empty .siterc file within it.
-
-  TODO:
-    Use template in ~/.resir/template (or overriden dir)
-
-  Summary:
-    Create a new resir site
-doco
-  end
-
-  # -----------------------
-  def self.create_or_preview_help
-    <<doco
-Usage: resir create_or_preview NEW_OR_EXISTING_SITE_DIR
-
-  About:
-    This will call 'resir create' or 'resir preview'
-    depending on whether or not the argument(s) passed 
-    in exist.
-
-  Examples:
-    resir create_or_preview ~/i-dont-exist  # will create dir/site
-    resir create_or_preview ~/i-dont-exist  # will preview new site
-
-  Summary:
-    Creates or previews a site, depending on if it exists yet
-doco
-  end
-
-  # -----------------------
+  # VERSION
   def self.version_help
     <<doco
 Usage: resir version
 
   Summary:
-    Outputs the current version of resir
+    Display the current version of resir
 doco
   end
-
-  # -----------------------
-  def self.console_help
-    <<doco
-Usage: resir console [*site_directories]
-
-  About:
-    Launches an interactive console with access
-    to all of Resir's classes, etc.
-
-    When you launch it with site directories, 
-    it will bind the $server and $sites to 
-    variables so you can easily test your code!
-
-  TODO:
-    Integrate MockRequest.  $site.first.get('/')
-
-  Summary:
-    Launch interactive console to test your sites
-
-doco
+  def self.version *no_args
+    puts Resir::VERSION::STRING
   end
+
+  # shortcuts to support calling -h / -v for help/version
+  class << self
+    alias h help
+    alias v version
+  end
+
+  #
+  #  ^ resire bin core
+  #
+
+  # require more commands (simple extensions to Resir::Bin)
+  #
+  %w( commands console create_and_preview ).each { |cmd| require File.dirname(__FILE__) + "/commands/#{cmd}" }
 
 end
