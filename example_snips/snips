@@ -1,0 +1,63 @@
+--- 
+- !ruby/object:Resir::Snip 
+  name: haml
+  version: "0005"
+  author: John Smith <john@something.com>
+  description: haml filter
+  dependencies: []
+
+  changelog: 
+  date: 
+- !ruby/object:Resir::Snip 
+  name: sass
+  version: "0100"
+  author: Joe Somebody <joe.somebody@blah-ti-dah.com>
+  description: SASS filter
+  dependencies: 
+  - erb
+  changelog: |-
+    disabled layout and set css header, by default
+     
+     i made some changes:
+    
+      * i did this ... and did this ... and __this__ *might* `even` show __in__ *markdown*
+      * also this
+  date: 
+- !ruby/object:Resir::Snip 
+  name: sass
+  version: 0099
+  author: Joe Somebody <joe.somebody@blah-ti-dah.com>
+  description: SASS filter
+  dependencies: 
+  - erb
+  changelog: |
+    
+    
+     first line here
+     
+     Big Update
+     ==========
+    
+     i made some changes:
+     --------------------
+
+  date: 
+- !ruby/object:Resir::Snip 
+  name: erb
+  version: "0001"
+  author: Joe Somebody <joe.somebody@blah-ti-dah.com>
+  description: ERB filter
+  dependencies: []
+
+  changelog: 
+  date: 
+- !ruby/object:Resir::Snip 
+  name: test
+  version: "0001"
+  author: remi <remi@remitaylor.com>
+  description: a test snip to use to test the snip server
+  dependencies: 
+  - haml
+  - sass
+  changelog: 
+  date: 

@@ -15,4 +15,4 @@ load    'resir/config.rb'   # requires Resir and Resir::Site (loads because Resi
 require 'resir/server'      # utilizes the other classes, none of them require it
 require 'resir/bin'         # utilized the other classes, none of them require it
 require 'resir/snip'        # 
-#require 'resir/snip_server' #
+require 'resir/snip_server' #

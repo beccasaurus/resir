@@ -11,11 +11,23 @@ class Resir::Snip
 
   attr_accessor :full_source, :author, :dependencies, :changelog, :date, :source, :description, :name, :version
 
-  def initialize file_or_text = nil
+  def to_yaml_properties
+    %w( name version author description dependencies changelog date ).collect { |x| "@#{x}" }
+  end
 
+  # class initialization
+  class << self
+    attr_accessor :snip_file_regex
+  end
+  def self.initialize
+    @snip_file_regex = /(.*)\.([\d]{0,10})\.\w{0,4}/
+  end
+  initialize
+
+  def initialize file_or_text = nil
     if File.file?file_or_text
       @full_source = File.read file_or_text
-      name_parts   = /(.*)\.([\d]{0,10})\.\w{0,4}/.match File.basename( file_or_text )
+      name_parts   = Resir::Snip.snip_file_regex.match File.basename( file_or_text )
       @name        = name_parts[1] if name_parts
       @version     = name_parts[2] if name_parts
     else
@@ -58,7 +70,22 @@ class Resir::Snip
 
     end
 
+    valid_vars = {}
+    %w( author changelog date dependencies description ).each do |var|
+      valid_vars[var] = header_vars[var] if header_vars.keys.include?var
+    end
+
+    @header_vars = valid_vars
     @header_vars
+  end
+
+  def info
+    text = ''
+    %w( name version author description ).each do |var|
+      value = instance_variable_get "@#{var}"
+      text << "#{var}: #{' ' * (15 - var.length)} #{ value }\n" if value
+    end
+    text
   end
 
   def author_name
