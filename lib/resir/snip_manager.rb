@@ -140,7 +140,8 @@ class Resir::Snip::Manager
   def list server
     snips = server.snips
     snips.sort! { |a,b| "#{a.name} #{a.version}" <=> "#{b.name} #{b.version}" }
-    snips.collect { |snip| "#{snip.name} \t(v #{snip.version.to_i}) \t#{snip.description}".gsub('[] ','').gsub('(v ) ','')  }.join "\n"
+    snips.collect { |snip| "#{snip.name} \t(v #{snip.version.to_i}) \t#{snip.description}".gsub('[] ','').gsub('(v ) ','') }.
+      select { |item| not item.strip.empty? }.join("\n").to_s
   end
   def list_local;         list local_server;          end
   def list_remote;        list remote_server;         end

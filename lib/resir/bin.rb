@@ -1,5 +1,17 @@
 class Resir::Bin
 
+  #
+  # I don't actually use optparse for the primary parser,
+  # instead we just call a method with the name of the first 
+  # argument, else fall back to calling the default_command
+  #
+  # Simple, eh?
+  #
+  # Regardless, you might wanna use optparse for your commands
+  # so this is required ( i use it for some of the commands )
+  #
+  require 'optparse'
+
   # RESIR
   def self.resir_help
     <<doco
@@ -150,6 +162,6 @@ doco
 
   # require more commands (simple extensions to Resir::Bin)
   #
-  %w( commands console create_and_preview ).each { |cmd| require File.dirname(__FILE__) + "/commands/#{cmd}" }
+  %w( commands console create_and_preview snips ).each { |cmd| require File.dirname(__FILE__) + "/commands/#{cmd}" }
 
 end
