@@ -138,7 +138,9 @@ class Resir::Snip::Manager
   def read_remote snip;   read remote_server, snip;   end
 
   def list server
-    server.snips.map { |snip| "#{snip.name} (#{snip.version})" }.join "\n"
+    snips = server.snips
+    snips.sort! { |a,b| "#{a.name} #{a.version}" <=> "#{b.name} #{b.version}" }
+    snips.collect { |snip| "#{snip.name} \t(v #{snip.version.to_i}) \t#{snip.description}".gsub('[] ','').gsub('(v ) ','')  }.join "\n"
   end
   def list_local;         list local_server;          end
   def list_remote;        list remote_server;         end
