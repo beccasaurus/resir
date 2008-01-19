@@ -7,7 +7,6 @@ class Resir::Snip::Server
 
     # remote server - we read the yaml (snips / snipz) into snips
     if source[/^http/]
-
       source     = source.gsub /\/$/, '' # remove trailing slash, if there
       url, index = first_valid_response_from_urls *%w( snips/snipz snipz snips/snips snips ).collect { |url| "#{source}/#{url}" }
       if url and index
@@ -19,11 +18,13 @@ class Resir::Snip::Server
 
     # local server - we read the files into snips
     else
+      @source = File.expand_path source
       if File.directory?source
         puts "directory: #{source}"
         snips = Dir[ File.join(source, '*.rb') ].select { |file| file[Resir::Snip.snip_file_regex] }
         @all_snips = snips.collect { |snip| Resir::Snip.new snip }.select { |snip| snip.header_vars.length > 0  }
       else
+        puts "NOT DIRECTORY: #{source}"
         @all_snips = []
       end
     end

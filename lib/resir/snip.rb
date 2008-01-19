@@ -42,6 +42,10 @@ class Resir::Snip
     @dependencies = []
   end
 
+  def filename
+    "#{name}.#{version}.rb"
+  end
+
   def source
     @full_source[/\n^[^#].*/m]
   end

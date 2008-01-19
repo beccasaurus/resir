@@ -8,27 +8,30 @@ describe Resir::Snip::Manager do
 
   it 'should lazy load snips (do NOTHING on #new except set the source)' do
     manager = get_new
-    manager.instance_eval( '@server' ).should be_nil
-    manager.snips
-    manager.instance_eval( '@server' ).should_not be_nil
+    manager.instance_eval( '@local_server' ).should be_nil
+    manager.local_snips
+    manager.instance_eval( '@local_server' ).should_not be_nil
   end
 
   it 'should complain if you load up your snip directory and try to install TO your snip directory' do
     manager = Resir::Snip::Manager.new Resir::snip_repo, Resir::snip_repo
-    manager.install(:sass).should raise_error
+    lambda { manager.install(:sass) }.should raise_error
   end
 
-  it 'should list local or remotely installed snips' do
+  it 'should list snips on remote server' do
+    manager = get_new
+
+    manager.list_remote.should include('sass')
+    manager.list_remote.should include('haml')
+  end
+
+  it 'should list locally installed snips' do
     manager = get_new
 
     manager.install :sass
     manager.uninstall :haml
     manager.list_local.should include('sass')
     manager.list_local.should_not include('haml')
-
-    manager.list_remote.should include('sass')
-    manager.list_remote.should include('haml')
-
     manager.uninstall :sass
   end
 
@@ -48,10 +51,12 @@ describe Resir::Snip::Manager do
   end
 
   it "should be able to find the full path to the current version of a snip, from its name" do
+    get_new.remote_path(:sass).should == "http://localhost/snips/sass.0100.rb"
+
     get_new.install :sass
-    get_new.path_to(:sass).should == File.expand_path( File.join(Resir::snip_repo, 'sass.0100.rb') )
+    get_new.local_path(:sass).should == File.expand_path( File.join(Resir::snip_repo, 'sass.0100.rb') )
     get_new.uninstall :sass
-    get_new.path_to(:sass).should == nil
+    get_new.local_path(:sass).should == nil
   end
 
   it "should be able install snips and tell if a snip is .installed?" do
