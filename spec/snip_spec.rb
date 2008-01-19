@@ -21,7 +21,6 @@ end
 describe Resir::Snip, 'parse' do
 
   it 'should return nil if passed something that evalates to an empty string' do
-    Resir::Snip.parse(5).should == nil
     Resir::Snip.parse('             ').should == nil
   end
 
@@ -40,7 +39,7 @@ describe Resir::Snip, 'parse' do
 
     snip = Resir::Snip.parse <<text
 # author: remi
-# DePendencIes:           erb, haml
+# DePendencIes:           erb, haml blah
 #
 #author: joe smith
 # DaTE:             Jan 18 2008
@@ -72,19 +71,23 @@ text
     snip.author_name.should == 'joe smith'
     snip.author_email.should be_nil
     snip.description.should be_nil
-    snip.dependencies.should == %w( erb haml )
+    snip.dependencies.should == %w( erb haml blah )
     snip.date.should == Time.parse('Jan 18 2008')
-    snip.changelog.should == <<log
-    first line
+    snip.changelog.should == <<log.chomp
 
-I made these ass changes
+     first line
+
+ I made these ass changes
 =======================
 
- * this
- * and this too
+  * this
+  * and this too
+
+ desCriptioN :   should be nil cause space before the ':'
 log
     snip.changelog_summary.should == 'first line'
     snip.source.should == <<text
+
 
 
 # author: NOT Joe Smith

@@ -9,5 +9,72 @@ require 'time'
 #
 class Resir::Snip
 
+  attr_accessor :full_source, :author, :dependencies, :changelog, :date, :source, :description
+
+  def initialize file_or_text = nil
+    @full_source = ( File.file?file_or_text ) ? File.read(file_or_text) : file_or_text
+    set_defaults
+    parse
+  end
+
+  def set_defaults
+    @dependencies = []
+  end
+
+  def source
+    @full_source[/\n^[^#].*/m]
+  end
+
+  def header
+    @full_source.gsub /\n^[^#].*/m , ''
+  end
+
+  def header_vars
+    return @header_vars if @header_vars
+      
+    @header_vars = {}
+    current_header_var = nil
+
+    self.header.each_line do |line|
+      
+      line = line.chomp.gsub /^#/, ''
+      match = /^[\s]?(\w+):(.*)$/.match line
+      
+      if match
+        current_header_var               = match[1].strip.downcase
+        @header_vars[current_header_var] = match[2].strip  
+      elsif not current_header_var.nil?
+        @header_vars[current_header_var] << ( "\n" + line )
+      end
+
+    end
+
+    @header_vars
+  end
+
+  def author_name
+    author ? author.gsub( /<(.*)>/, '' ).strip : nil
+  end
+
+  def author_email
+    match = /<(.*)>/.match(author)
+    match ? match[1] : nil
+  end
+
+  def changelog_summary
+    changelog ? changelog.strip[/.*/] : nil
+  end
+
+  def parse
+    %w( author changelog date dependencies description ).each do |var|
+      instance_variable_set "@#{var}", header_vars[var] if header_vars.keys.include?var
+    end
+    @dependencies = @dependencies.gsub( /[,;]/ , ' ').split if @dependencies and @dependencies.is_a?String
+    @date = Time.parse @date if @date and @date.is_a?String
+  end
+
+  def self.parse obj
+    return ( obj.to_s.strip.empty? ) ? nil : Resir::Snip.new( obj.to_s )
+  end
 
 end
