@@ -43,6 +43,7 @@ class Resir::Snip::Server
   def all_snips snip_matcher=nil
     return @all_snips unless snip_matcher
 
+    snip_matcher = snip_matcher.to_s if snip_matcher.is_a?Symbol
     if snip_matcher.is_a?Regexp
       @all_snips.select { |snip| snip.name[snip_matcher] }
     else
@@ -51,10 +52,11 @@ class Resir::Snip::Server
   end
 
   def [] snip_matcher
+    snip_matcher = snip_matcher.to_s if snip_matcher.is_a?Symbol
     if snip_matcher.is_a?Regexp
       snips.select { |snip| snip.name[snip_matcher] }
     else
-      snips.select { |snip| snip.name == snip_matcher }
+      snips.select { |snip| snip.name == snip_matcher }.first # you expect to get snip when you say:  server.snip :sass
     end
   end
 
