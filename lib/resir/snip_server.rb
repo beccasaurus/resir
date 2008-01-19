@@ -68,7 +68,8 @@ class Resir::Snip::Server
     if snip_matcher.is_a?Regexp
       snips.select { |snip| snip.name[snip_matcher] }
     else
-      snips.select { |snip| snip.name == snip_matcher }.first # you expect to get snip when you say:  server.snip :sass
+      result = snips.select { |snip| snip.name == snip_matcher }.first # you expect to get snip when you say:  server.snip :sass
+      result
     end
   end
 

@@ -44,7 +44,6 @@ class Resir::Snip::Manager
         snip   = remote_server.snips snip
         path   = path_to_snip_for_server local_server, snip
         File.open( path, 'w' ){ |f| f << source }
-        puts "installed #{path}" if File.file?path
       else
         puts "#{snip} already installed"
       end
@@ -66,18 +65,54 @@ class Resir::Snip::Manager
     snips.each do |snip|
       path = path local_server, snip
       File.delete( path ) if path and File.file?path
-      puts "uninstalled #{path}" if path and not File.file?path
     end
 
     reload_local
   end
 
+  # i need to stop with all this local/remote checking!  tho that's what the manager is, really ...
+  # something to tie together a 'local' and a 'remote' repo ... hrm ...
+  def log snip_name
+    snips = local_server.all_snips( snip_name )
+    snips = remote_server.all_snips( snip_name ) if snips.nil? or snips.empty?
+    snips.sort! { |a,b| b.version.to_i <=> a.version.to_i }
+    snips.collect { |snip| "[#{timeago snip.date}] (v #{snip.version.to_i}) #{snip.changelog_summary}".gsub('[] ','').gsub('(v ) ','')  }.join "\n"
+  end
+
+  # TOTALLY un-optimized ... like all of this!
+  #
+  # need to start tracking and watching whenever a remote server reloads
+  #
+  # local server too
   def search text
+
+    # snip.name => snip
+    name_matches = {}
+    description_matches = {}
+
+    local_server.snips.each do |snip|
+      name_matches[snip.name] = snip if snip.name.downcase.include?text
+      description_matches[snip.name] = snip if snip.description.downcase.include?text
+    end
+    remote_server.snips.each do |snip|
+      name_matches[snip.name] = snip if snip.name.downcase.include?text
+      description_matches[snip.name] = snip if snip.description.downcase.include?text
+    end
+
+    name_matches.keys.each do |name_match|
+      description_matches.delete(name_match) if description_matches.keys.include?name_match
+    end
+
+    snips  = name_matches.values
+    snips += description_matches.values
+    snips
 
   end
 
-  def show *snips
-
+  def show snip_name
+    snip = local_server.snips( snip_name )
+    snip = remote_server.snips( snip_name ) if snip.nil?
+    snip.info
   end
 
   def path_to_snip_for_server server, snip_object
