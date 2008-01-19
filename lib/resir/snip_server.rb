@@ -40,8 +40,18 @@ class Resir::Snip::Server
     current.values
   end
 
+  def all_snips snip_matcher=nil
+    return @all_snips unless snip_matcher
+
+    if snip_matcher.is_a?Regexp
+      @all_snips.select { |snip| snip.name[snip_matcher] }
+    else
+      @all_snips.select { |snip| snip.name == snip_matcher }
+    end
+  end
+
   def [] snip_matcher
-    if snip_matcher.respond_to?:match
+    if snip_matcher.is_a?Regexp
       snips.select { |snip| snip.name[snip_matcher] }
     else
       snips.select { |snip| snip.name == snip_matcher }
