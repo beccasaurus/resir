@@ -6,9 +6,11 @@ class Resir::Snip::Server
     @source = source
 
     # remote server - we read the yaml (snips / snipz) into snips
-    if source[/^http/]
-      source     = source.gsub /\/$/, '' # remove trailing slash, if there
+    if @source[/^http/]
+
+      @source    = @source.gsub /\/$/, '' # remove trailing slash, if there
       url, index = first_valid_response_from_urls *%w( snips/snipz snipz snips/snips snips ).collect { |url| "#{source}/#{url}" }
+      
       if url and index
         @source = url.sub /\/snip[zs]$/, '' # hold onto the url so we know where to get the files - they should be in the same dir as the snips/z file
         index  = Resir::Snip::Server.decompress(index) if url[/z$/] # decompress if snipZ (ends with z, for zlib compression, like *.Z)
@@ -18,16 +20,24 @@ class Resir::Snip::Server
 
     # local server - we read the files into snips
     else
+      
       @source = File.expand_path source
-      if File.directory?source
-        puts "directory: #{source}"
-        snips = Dir[ File.join(source, '*.rb') ].select { |file| file[Resir::Snip.snip_file_regex] }
+      
+      if File.directory?@source
+        snips = Dir[ File.join(@source, '*.rb') ].select { |file| file[Resir::Snip.snip_file_regex] }
         @all_snips = snips.collect { |snip| Resir::Snip.new snip }.select { |snip| snip.header_vars.length > 0  }
       else
-        puts "NOT DIRECTORY: #{source}"
         @all_snips = []
       end
+
     end
+  end
+
+  def is_remote?
+    @source.downcase[/^http/]
+  end
+  def is_local?
+    not is_remote?
   end
 
   def snips matcher=nil

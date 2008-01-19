@@ -3,14 +3,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe Resir::Snip::Manager do
 
   def get_new
-    Resir::Snip::Manager.new
-  end
-
-  it 'should lazy load snips (do NOTHING on #new except set the source)' do
-    manager = get_new
-    manager.instance_eval( '@local_server' ).should be_nil
-    manager.local_snips
-    manager.instance_eval( '@local_server' ).should_not be_nil
+    Resir::Snip::Manager.new Resir::snip_repo, File.dirname(__FILE__) + '/../example_snips'
   end
 
   it 'should complain if you load up your snip directory and try to install TO your snip directory' do
@@ -51,9 +44,11 @@ describe Resir::Snip::Manager do
   end
 
   it "should be able to find the full path to the current version of a snip, from its name" do
-    get_new.remote_path(:sass).should == "http://localhost/snips/sass.0100.rb"
+    get_new.remote_path(:sass).should == File.expand_path( File.dirname(__FILE__) + '/../example_snips/sass.0100.rb' )
 
+    puts "__ INSTALL SASS __"
     get_new.install :sass
+    puts "__ GET LOCAL PATH FOR SASS __"
     get_new.local_path(:sass).should == File.expand_path( File.join(Resir::snip_repo, 'sass.0100.rb') )
     get_new.uninstall :sass
     get_new.local_path(:sass).should == nil
@@ -64,7 +59,7 @@ describe Resir::Snip::Manager do
     manager.uninstall :sass
     manager.installed?(:sass).should == false
     manager.install :sass
-    manager.installed?(:sass).should == true
+    manager.installed?(:sass).should_not == false
     manager.uninstall :sass
     manager.installed?(:sass).should == false
   end
@@ -80,20 +75,17 @@ describe Resir::Snip::Manager do
 
   it "should be able to read a snip, returning its text, either remotely or locally" do
     manager = get_new
-    manager.uninstall :sass
-    manager.read_local( :sass ).should be_nil
 
     remote = manager.read_remote( :sass )
     remote.should_not be_nil
-    remote.should include('0100')
-    remote.should_not include('0099')
     remote.should include('@layout = nil')
+
+    manager.uninstall :sass
+    manager.read_local( :sass ).should be_nil
 
     manager.install :sass
     local = manager.read_local( :sass )
     local.should_not be_nil
-    local.should include('0100')
-    local.should_not include('0099')
     local.should include('@layout = nil')
 
     manager.uninstall :sass
