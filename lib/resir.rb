@@ -14,5 +14,8 @@ require 'resir/responder'
 load    'resir/config.rb'   # requires Resir and Resir::Site (loads because Resir can re-load)
 require 'resir/server'      # utilizes the other classes, none of them require it
 require 'resir/bin'         # utilized the other classes, none of them require it
-require 'resir/snip'        # 
-require 'resir/snip_server' #
+
+# snips
+require 'resir/snip'
+require 'resir/snip_server'
+require 'resir/snip_manager'

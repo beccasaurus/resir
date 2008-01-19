@@ -21,3 +21,6 @@ Resir::filter_search_path << File.join(Resir::path_to_resir_lib, 'resir/filters'
 
 Resir::command_search_path ||= ['.', '~/.resir', '~/.resir/commands']
 Resir::command_search_path << File.join(Resir::path_to_resir_lib, 'resir/commands')
+
+Resir::snip_repo           ||= '~/.resir/snips'
+Resir::snip_source         ||= 'http://localhost'

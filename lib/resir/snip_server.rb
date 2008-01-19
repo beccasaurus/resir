@@ -11,6 +11,7 @@ class Resir::Snip::Server
       source     = source.gsub /\/$/, '' # remove trailing slash, if there
       url, index = first_valid_response_from_urls *%w( snips/snipz snipz snips/snips snips ).collect { |url| "#{source}/#{url}" }
       if url and index
+        @source = url.sub /\/snip[zs]$/, '' # hold onto the url so we know where to get the files - they should be in the same dir as the snips/z file
         index  = Resir::Snip::Server.decompress(index) if url[/z$/] # decompress if snipZ (ends with z, for zlib compression, like *.Z)
         require 'yaml'
         @all_snips = YAML::load( index )
