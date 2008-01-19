@@ -1,5 +1,5 @@
 require 'time'
-#
+
 # Respresent a snip or snippet of code for resir
 #
 # Snips are basically shared .resirrc and/or .siterc files
@@ -9,10 +9,19 @@ require 'time'
 #
 class Resir::Snip
 
-  attr_accessor :full_source, :author, :dependencies, :changelog, :date, :source, :description
+  attr_accessor :full_source, :author, :dependencies, :changelog, :date, :source, :description, :name, :version
 
   def initialize file_or_text = nil
-    @full_source = ( File.file?file_or_text ) ? File.read(file_or_text) : file_or_text
+
+    if File.file?file_or_text
+      @full_source = File.read file_or_text
+      name_parts   = /(.*)\.([\d]{0,10})\.\w{0,4}/.match File.basename( file_or_text )
+      @name        = name_parts[1] if name_parts
+      @version     = name_parts[2] if name_parts
+    else
+      @full_source = file_or_text
+    end
+    
     set_defaults
     parse
   end

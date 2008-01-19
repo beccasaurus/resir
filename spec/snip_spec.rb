@@ -7,13 +7,35 @@ describe Resir::Snip do
     File.dirname(__FILE__) + '/../example_snips/' + full_snippet_filename
   end
 
-  it 'should parse snip files' do
+  it 'should parse snip files - erb.0001.rb test' do
     snip = Resir::Snip.new path_to_snip_file('erb.0001.rb')
     snip.description.should == 'ERB filter'
     snip.author.should == 'Joe Somebody <joe.somebody@blah-ti-dah.com>'
     snip.author_name.should == 'Joe Somebody'
     snip.author_email.should == 'joe.somebody@blah-ti-dah.com'
     snip.dependencies.should be_empty
+    snip.name.should == 'erb'
+    snip.version.should == '0001'
+  end
+
+  it 'should parse snip files - haml.0005.rb test' do
+    snip = Resir::Snip.new path_to_snip_file('haml.0005.rb')
+    snip.description.should == 'haml filter'
+    snip.author_name.should == 'John Smith'
+    snip.author_email.should == 'john@something.com'
+    snip.dependencies.should be_empty
+    snip.name.should == 'haml'
+    snip.version.should == '0005'
+  end
+
+  it 'should parse snip files - test.0001.rb test' do
+    snip = Resir::Snip.new path_to_snip_file('test.0001.rb')
+    snip.description.should == 'a test snip to use to test the snip server'
+    snip.author_name.should == 'remi'
+    snip.author_email.should == 'remi@remitaylor.com'
+    snip.dependencies.should == %w( haml sass )
+    snip.name.should == 'test'
+    snip.version.should == '0001'
   end
 
 end
