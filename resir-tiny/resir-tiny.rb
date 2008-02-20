@@ -1,5 +1,5 @@
 #! /usr/bin/ruby
-%w( rubygems thin ).each { |lib| require lib }
+%w( rubygems thin mime/types ).each { |lib| require lib }
 
 dir     = File.expand_path( ARGV.shift || '.' )
 filters = {
@@ -9,7 +9,10 @@ filters = {
 Thin::Server.start('0.0.0.0', 5000) do 
   use Rack::CommonLogger
   use Rack::ShowExceptions
+
   run lambda { |env|
+    request  = Rack::Request.new env
+    response = Rack::Response.new
 
     path = (env['PATH_INFO'] == '/') ? '/index' : env['PATH_INFO']
     path = path + '.html' unless path.include? '.'
@@ -17,10 +20,13 @@ Thin::Server.start('0.0.0.0', 5000) do
     return [ 404, {}, "File Not Found: #{path}" ] unless file
 
     exts = File.basename( file ).split '.'
-    body = File.read file
-    exts.map { |ext| filters[ext] }.compact.each { |f| body = f.call body, binding }
-    return [ 200, { 'Content-Type' => 'text/html' }, body ]
+    name = exts.shift ; name += ".#{exts.first}" unless exts.empty?
+    response.headers['Content-Type'] = (MIME::Types.type_for(name) || 'text/plain').to_s
+
+    response.body = File.read file
+    exts.map { |ext| filters[ext] }.compact.each { |f| response.body = f.call response.body, binding }
+
+    response.finish
   }
 end
 
-# name = exts.shift ; name += ".#{exts.first}" unless exts.empty? # <= use for BUILD
