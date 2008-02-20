@@ -6,19 +6,21 @@ filters = {
   'erb' => lambda { |text,b| require 'erb'; ERB.new(text).result(b) }
 }
 
-Rack::Handler::Thin.run lambda { |env|
-  begin
+Thin::Server.start('0.0.0.0', 5000) do 
+  use Rack::CommonLogger
+  use Rack::ShowExceptions
+  run lambda { |env|
 
     path = (env['PATH_INFO'] == '/') ? '/index' : env['PATH_INFO']
-    file = Dir[ File.join(dir,path) + '.*' ].first
+    path = path + '.html' unless path.include? '.'
+    file = Dir[ File.join(dir,path) + '*' ].first
+    return [ 404, {}, "File Not Found: #{path}" ] unless file
+
     exts = File.basename( file ).split '.'
-    name = exts.shift
     body = File.read file
-
     exts.map { |ext| filters[ext] }.compact.each { |f| body = f.call body, binding }
+    return [ 200, { 'Content-Type' => 'text/html' }, body ]
+  }
+end
 
-    [ 200, { 'Content-Type' => 'text/html' }, body ]
-  rescue => ex
-    [ 200, { 'Content-Type' => 'text/html' }, ex.to_s ]
-  end
-}
+# name = exts.shift ; name += ".#{exts.first}" unless exts.empty? # <= use for BUILD
