@@ -8,7 +8,7 @@ class Resir::Bin
     elsif lib_available? 'mongrel'
       Rack::Handler::Mongrel
     elsif lib_available? 'webrick'
-      Rack::Handler::Webrick
+      Rack::Handler::WEBrick
     end
   end
 

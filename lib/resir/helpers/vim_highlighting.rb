@@ -50,7 +50,7 @@ site.filters {
       `vim +'exe "normal zR"' +":runtime\! syntax/2html.vim" +'wq!' +'q!' '#{full_save_path}' 2>/dev/null`
       if File.file?full_html_path
         html = File.read(full_html_path)
-        html = html[/<pre>(.*)<\/pre>/m].sub('<pre>','<pre class="code vim">')
+        html = html[/<pre(.*)<\/pre>/m].sub('<pre','<pre class="code vim" ')
         html = before + "\n" + html
         File.open(full_html_path,'w'){ |f| f << html }
         html

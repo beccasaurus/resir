@@ -17,7 +17,7 @@ class Resir::Bin
     <<doco
 
   resir == %{ Ridiculously Easy Site's In Ruby }
-                        by remi                
+                      by Rebecca                
 
     Usage:
       resir -h/--help

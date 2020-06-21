@@ -1,4 +1,4 @@
 #! /usr/bin/env ruby
-require File.dirname(__FILE__) + '/../lib/resir'
+require_relative '../lib/resir'
 
 Resir::Bin.call ARGV
