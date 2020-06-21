@@ -1,3 +1,5 @@
+> ℹ️ Rebecca's first web framework! Authored in 2008.
+
 # resir
 
 ## what's in a name?
