@@ -2,18 +2,18 @@
 
 ## what's in a name?
 
-resir can stand for:
+`resir` can stand for:
 
- * Rebecca's easy sites in ruby
- * Ridiculously easy sites in ruby
- * Really exasperatingly stupid ill-conceived rubbish
+ * `r`ebecca's `e`asy `s`ites `i`n `r`uby
+ * `r`idiculously `e`asy `s`ites `i`n `r`uby
+ * `r`eally `e`xasperatingly `s`tupid `i`ll-conceived `r`ubbish
 
 ## what's it do?
 
 Hardly anything, really.
 
 `resir` can be run like yet another ruby web framework 
-or it can be run by simply using eruby
+or it can be run by simply using `eruby`
 
 It's not meant to solve your database-driven website 
 problems
@@ -40,3 +40,21 @@ Run it using `eruby`, `cgi`, `fastcgi`, `mongrel`, `thin` ... whatever!
 
 Mostly static web sites should be ridiculously easy.
 resir tries to make that a reality.
+
+## how's it work?
+
+### `bin/resir`
+
+### `.siterc`
+
+### filters
+
+### helpers
+
+### layouts
+
+### partials
+
+### syntax highlighting
+
+### snippets
