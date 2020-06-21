@@ -150,7 +150,7 @@ class Resir
     end
     site = Resir unless site.is_a?Resir::Site
     filters = filters.collect { |name| site.loaded_filters[name] } unless filters.first.respond_to?:call
-    filters.select{ |x| not x.nil? }.each { |callable| rendered = callable[rendered,binding] }
+    filters.select{ |x| ! x.nil? }.each { |callable| rendered = callable[rendered,binding] }
     rendered.strip
   end
 

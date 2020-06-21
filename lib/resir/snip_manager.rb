@@ -1,4 +1,5 @@
 # TODO refactor the identical local_ remote_ or _local _remote methods to method_missing ... args = local/remote_server + method args
+require "fileutils"
 
 class Resir::Snip::Manager
 
@@ -35,7 +36,8 @@ class Resir::Snip::Manager
     raise "Cannot install to a remote local." if local_server.is_remote?
     raise "Cannot install to the same local as your Snip remote" if local_server.source == remote_server.source
 
-    File.makedirs local_server.source unless File.directory? local_server.source
+    FileUtils.mkdir_p local_server.source unless File.directory? local_server.source
+    # File.makedirs local_server.source unless File.directory? local_server.source
     snips.each do |snip|
 
       # a bit confusing, with some methods taking string snip names and others taking objects ... CONVENTIONALIZE !!!!

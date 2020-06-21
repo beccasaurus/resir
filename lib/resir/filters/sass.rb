@@ -1,4 +1,4 @@
-if lib_available? 'haml'
+if lib_available? 'sass'
 
   # require 'resir/filters/erb' # require one filter from another?
 

@@ -7,9 +7,11 @@ if lib_available? 'markaby'
   mab { |text,binding|
   
     assigns = {}
-    eval('instance_variables',binding).each do |name|
-      instance_variable_set name, eval(name,binding)
-      assigns[ name[1..-1] ] = eval(name,binding)
+    unless binding.nil?
+      eval('instance_variables',binding).each do |name|
+        instance_variable_set name, eval(name,binding)
+        assigns[ name[1..-1] ] = eval(name,binding)
+      end
     end
     
     mab = Markaby::Builder.new(assigns, self)
